@@ -1,0 +1,71 @@
+<div class="row">
+
+</div>
+
+<div class="row">
+  <div class="col-md-6 col-sm-6">
+         <!-- BEGIN PORTLET-->
+         <div class="portlet light">
+             <div class="portlet-title">
+                 <div class="caption caption-md">
+                     <i class="icon-bar-chart font-red"></i>
+                     <span class="caption-subject font-red bold uppercase">The world is listening, what are you doing? </span>
+                 </div>
+                 <div class="actions">
+                     <div class="btn-group">
+                         <a class="btn btn-med" ng-click="reloadTransactions()"><i class="fa fa-refresh" ng-class="{'fa-spin': txLoading}"></i>
+                         </a>
+                     </div>
+                 </div>
+             </div>
+             <div class="portlet-body">
+                 <div class="todo-tasklist scrollable">
+                     <div ng-repeat="t in latest_txs track by $index" class="todo-tasklist-item item-border-green row" ng-class="(t.extraData.indexOf('Parity') > -1) ? 'item-border-red': '';(t.extraData.indexOf('Pool') > -1) ? 'item-border-blue': ''">
+                         <!--TODO: color by known miners -->
+                         <div class="col-sm-5">
+                             <span class="todo-tasklist-item-title"><a href="/tx/{{t.hash}}" class="primary-link"><img src="/img/pppicon.png" alt="{{t.hash}}"> Playback</a><a href="/block/{{t.number}}">{{t.number}}</a></span><br>
+                             <span class="todo-tasklist-date">
+                                 <i class="fa fa-hourglass-o"></i>{{t.timestamp | timeDuration }} ago</span>
+                         </div>
+                         <div class="todo-tasklist-controls col-sm-7">
+                             <div class="todo-tasklist-item-text"><span class="todo-tasklist-item-text"><a href="/addr/{{t.to}}">{{t.to.substr(0,24)}}...</a></span>
+                             <br> by <a href="/addr/{{t.from}}">{{t.from.substr(0,24)}}...</a><br>
+                             {{t.value}} coin paid.
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <!-- END PORTLET-->
+     </div>
+    <div class="col-md-6 col-sm-6" >
+        <!-- BEGIN PORTLET-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption caption-md">
+                    <span><b>Musicoin</b> is a <a href="https://en.wikipedia.org/wiki/Cryptocurrency">cryptocurrency</a> for music, based on <a href="https://www.youtube.com/results?search_query=blockchain+ted">blockchain</a> technology. It's secure, immune and borderless. </span>
+                </div>
+            </div>
+
+
+            <div class="portlet-title">
+                <div class="caption caption-md">
+                    <span class="caption-subject font-red bold uppercase">How to release music? (Musicians only)</span>
+                    <br><br>
+                    <span>Download <a href="https://github.com/Musicoin/desktop/releases">desktop application</a> to create your profile then you can release your old and new works to Musicoin network to earn. </span>
+                    <br><br><img width="400px" src="/img/formusicians.png">
+                </div>
+            </div>
+
+            <div class="portlet-title">
+                <div class="caption caption-md">
+                    <span class="caption-subject font-red bold uppercase">How to get Musicoin?</span>
+                    <br><br>
+                    <span>Download <a href="https://github.com/Musicoin/desktop/releases">desktop application</a> to mine from the network for free, or buy online(coming soon...). </span>
+                </div>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+</div>
