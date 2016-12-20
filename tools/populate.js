@@ -20,8 +20,9 @@ var grabBlocks = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
 
-
-    listenBlocks(config, web3);
+        setTimeout(function() {
+            grabBlock(config, web3, config.blocks.pop());
+        }, 2000);
 
 }
 
@@ -41,7 +42,7 @@ var listenBlocks = function(config, web3) {
 }
 
 var getTx = function(web3,desiredBlockHashOrNumber) {
-
+      console.log(desiredBlockHashOrNumber);
       if (web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber) > 0) {
         var d =0;
         for (;d <web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);d++) {
@@ -195,9 +196,15 @@ var grabBlock = function(config, web3, blockHashOrNumber) {
             else {
                 getTx(web3, desiredBlockHashOrNumber);
                 grabInternalTxs(web3, desiredBlockHashOrNumber);
-                writeBlockToDB(config, blockData);
 
-                return;  //listen only
+                if('terminateAtExistingDB' in config && config.terminateAtExistingDB === true) {
+                    checkBlockDBExistsThenWrite(config, blockData);
+                }
+                else {
+                  writeBlockToDB(config, blockData);
+                }
+                if('listenOnly' in config && config.listenOnly === true)
+                    return;
 
                 if('hash' in blockData && 'number' in blockData) {
                     // If currently working on an interval (typeof blockHashOrNumber === 'object') and

@@ -2,6 +2,6 @@
     "gethPort": 8545,
     "blocks": [ {"start": 0, "end": "latest"}],
     "quiet": true,
-    "terminateAtExistingDB": false,
-    "listenOnly": true
+    "terminateAtExistingDB": true,
+    "listenOnly": false
 }
