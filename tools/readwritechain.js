@@ -1,3 +1,5 @@
+// define basic functions to read blocks and transations
+
 require( '../db.js' );
 require('../db-internal.js')
 
@@ -16,15 +18,6 @@ var Transaction = mongoose.model( 'Transaction' );
 var InternalTx  = mongoose.model( 'InternalTransaction' );
 
 
-var grabBlocks = function(config) {
-    var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
-        config.gethPort.toString()));
-
-        setTimeout(function() {
-            grabBlock(config, web3, config.blocks.pop());
-        }, 2000);
-
-}
 
 var listenBlocks = function(config, web3) {
     var newBlocks = web3.eth.filter("latest");
@@ -40,6 +33,7 @@ var listenBlocks = function(config, web3) {
 
     });
 }
+
 
 var getTx = function(web3,desiredBlockHashOrNumber) {
       console.log(desiredBlockHashOrNumber);
@@ -281,95 +275,3 @@ var checkBlockDBExistsThenWrite = function(config, blockData) {
 
     })
 }
-
-/*
-  Patch Missing Blocks
-*/
-var patchBlocks = function(config) {
-    var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
-        config.gethPort.toString()));
-
-    // number of blocks should equal difference in block numbers
-    var firstBlock = 0;
-    var lastBlock = web3.eth.blockNumber;
-    blockIter(web3, firstBlock, lastBlock, config);
-}
-
-var blockIter = function(web3, firstBlock, lastBlock, config) {
-    // if consecutive, deal with it
-    if (lastBlock < firstBlock)
-        return;
-    if (lastBlock - firstBlock === 1) {
-        [lastBlock, firstBlock].forEach(function(blockNumber) {
-            Block.find({number: blockNumber}, function (err, b) {
-                if (!b.length)
-                    grabBlock(config, web3, firstBlock);
-            });
-        });
-    } else if (lastBlock === firstBlock) {
-        Block.find({number: firstBlock}, function (err, b) {
-            if (!b.length)
-                grabBlock(config, web3, firstBlock);
-        });
-    } else {
-
-        Block.count({number: {$gte: firstBlock, $lte: lastBlock}}, function(err, c) {
-          var expectedBlocks = lastBlock - firstBlock + 1;
-          if (c === 0) {
-            grabBlock(config, web3, {'start': firstBlock, 'end': lastBlock});
-          } else if (expectedBlocks > c) {
-            console.log("Missing: " + JSON.stringify(expectedBlocks - c));
-            var midBlock = firstBlock + parseInt((lastBlock - firstBlock)/2);
-            blockIter(web3, firstBlock, midBlock, config);
-            blockIter(web3, midBlock + 1, lastBlock, config);
-          } else
-            return;
-        })
-    }
-}
-
-
-/** On Startup **/
-// geth --rpc --rpcaddr "localhost" --rpcport "8545"  --rpcapi "eth,net,web3"
-
-var config = {};
-
-try {
-    var configContents = fs.readFileSync('config.json');
-    config = JSON.parse(configContents);
-}
-catch (error) {
-    if (error.code === 'ENOENT') {
-        console.log('No config file found. Using default configuration (will ' +
-            'download all blocks starting from latest)');
-    }
-    else {
-        throw error;
-        process.exit(1);
-    }
-}
-
-// set the default geth port if it's not provided
-if (!('gethPort' in config) || (typeof config.gethPort) !== 'number') {
-    config.gethPort = 8545; // default
-}
-
-// set the default output directory if it's not provided
-if (!('output' in config) || (typeof config.output) !== 'string') {
-    config.output = '.'; // default this directory
-}
-
-// set the default blocks if it's not provided
-if (!('blocks' in config) || !(Array.isArray(config.blocks))) {
-    config.blocks = [];
-    config.blocks.push({'start': 0, 'end': 'latest'});
-}
-
-console.log('Using configuration:');
-console.log(config);
-
-//grabBlocks(config);
-patchBlocks(config);
-//var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
-//    config.gethPort.toString()));
-//getTx(web3, 103748);

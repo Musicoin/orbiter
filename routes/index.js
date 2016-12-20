@@ -200,7 +200,7 @@ var latestBlock = function(req, res) {
 
 
 var getLatest = function(lim, res, callback) {
-  var blockFind = Block.find({}, "number transactions timestamp miner extraData")
+  var blockFind = Block.find({}, "number timestamp miner extraData txns")
                       .lean(true).sort('-number').limit(lim);
   blockFind.exec(function (err, docs) {
     callback(docs, res);
@@ -209,7 +209,7 @@ var getLatest = function(lim, res, callback) {
 
 /* get blocks from db */
 var sendBlocks = function(lim, res) {
-  var blockFind = Block.find({}, "number transactions timestamp miner extraData")
+  var blockFind = Block.find({}, "number timestamp miner extraData txns")
                       .lean(true).sort('-number').limit(lim);
   blockFind.exec(function (err, docs) {
     res.write(JSON.stringify({"blocks": filters.filterBlocks(docs)}));

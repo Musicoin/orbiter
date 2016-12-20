@@ -20,7 +20,8 @@ var Block = new Schema(
     "gasLimit": Number,
     "gasUsed": Number,
     "timestamp": Number,
-    "uncles": [String]
+    "uncles": [String],
+    "txns":Number
 });
 
 var Contract = new Schema(

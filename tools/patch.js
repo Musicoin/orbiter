@@ -1,3 +1,5 @@
+// define basic functions to read blocks and transations
+
 require( '../db.js' );
 require('../db-internal.js')
 
@@ -20,8 +22,9 @@ var grabBlocks = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
 
-
-    listenBlocks(config, web3);
+        setTimeout(function() {
+            grabBlock(config, web3, config.blocks.pop());
+        }, 2000);
 
 }
 
@@ -40,10 +43,11 @@ var listenBlocks = function(config, web3) {
     });
 }
 
-var getTx = function(web3,desiredBlockHashOrNumber) {
 
+
+var getTx = function(web3,desiredBlockHashOrNumber) {
+      console.log(desiredBlockHashOrNumber);
       if (web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber) > 0) {
-        console.log("Capture transactions");
         var d =0;
         for (;d <web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);d++) {
               var txData = web3.eth.getTransactionFromBlock(desiredBlockHashOrNumber,d);
@@ -97,8 +101,8 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             var jdata = JSON.parse(data);
         } catch (e) {
             console.error(e);
-            batchSize = 10;
-            if (batchSize > 1) {
+            batchsize = 10;
+            if (batchsize > 1) {
                 for (var b=0; b<batchSize; b++) {
                     grabInternalTxs(web3, batchNum+b, 1);
                 }
@@ -107,7 +111,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             }
             return
         }
-          console.log("\n Internal tx: " + data);
+          console.log("\n Here comes itx: " + data);
           for (d in jdata.result) {
             var j = jdata.result[d];
             if (j.action.call)
@@ -132,7 +136,6 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             j.subtraces = web3.toDecimal(j.subtraces);
             j.transactionPosition = web3.toDecimal(j.transactionPosition);
             j.blockNumber = web3.toDecimal(j.blockNumber);
-
             writeTxToDB(j);
           }
       });
@@ -198,10 +201,15 @@ var grabBlock = function(config, web3, blockHashOrNumber) {
             else {
                 getTx(web3, desiredBlockHashOrNumber);
                 grabInternalTxs(web3, desiredBlockHashOrNumber);
-                blockData.txns = web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);
-                writeBlockToDB(config, blockData);
 
-                return;  //listen only
+                if('terminateAtExistingDB' in config && config.terminateAtExistingDB === true) {
+                    checkBlockDBExistsThenWrite(config, blockData);
+                }
+                else {
+                  writeBlockToDB(config, blockData);
+                }
+                if('listenOnly' in config && config.listenOnly === true)
+                    return;
 
                 if('hash' in blockData && 'number' in blockData) {
                     // If currently working on an interval (typeof blockHashOrNumber === 'object') and
@@ -278,6 +286,7 @@ var checkBlockDBExistsThenWrite = function(config, blockData) {
     })
 }
 
+
 /*
   Patch Missing Blocks
 */
@@ -286,7 +295,7 @@ var patchBlocks = function(config) {
         config.gethPort.toString()));
 
     // number of blocks should equal difference in block numbers
-    var firstBlock = 1000000;
+    var firstBlock = 0;
     var lastBlock = web3.eth.blockNumber;
     blockIter(web3, firstBlock, lastBlock, config);
 }
@@ -364,8 +373,8 @@ if (!('blocks' in config) || !(Array.isArray(config.blocks))) {
 console.log('Using configuration:');
 console.log(config);
 
-grabBlocks(config);
-//patchBlocks(config);
+//grabBlocks(config);
+patchBlocks(config);
 //var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
 //    config.gethPort.toString()));
 //getTx(web3, 103748);
