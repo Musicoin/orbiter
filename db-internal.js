@@ -30,7 +30,7 @@ var InternalTransaction = new Schema(
     "blockNumber":{type: Number, index: {unique: false}},
     "timestamp": Number,
     "blockHash":String
-});
+}, { strict: false });
 
 mongoose.model('InternalTransaction', InternalTransaction);
 module.exports.InternalTransaction = mongoose.model('InternalTransaction');

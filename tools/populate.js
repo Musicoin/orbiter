@@ -97,7 +97,8 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             var jdata = JSON.parse(data);
         } catch (e) {
             console.error(e);
-            if (batchSize > 1) {
+            batchsize = 10;
+            if (batchsize > 1) {
                 for (var b=0; b<batchSize; b++) {
                     grabInternalTxs(web3, batchNum+b, 1);
                 }
@@ -289,7 +290,7 @@ var patchBlocks = function(config) {
         config.gethPort.toString()));
 
     // number of blocks should equal difference in block numbers
-    var firstBlock = 1000000;
+    var firstBlock = 0;
     var lastBlock = web3.eth.blockNumber;
     blockIter(web3, firstBlock, lastBlock, config);
 }
@@ -367,8 +368,8 @@ if (!('blocks' in config) || !(Array.isArray(config.blocks))) {
 console.log('Using configuration:');
 console.log(config);
 
-grabBlocks(config);
-//patchBlocks(config);
+//grabBlocks(config);
+patchBlocks(config);
 //var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
 //    config.gethPort.toString()));
 //getTx(web3, 103748);

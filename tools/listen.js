@@ -43,6 +43,7 @@ var listenBlocks = function(config, web3) {
 var getTx = function(web3,desiredBlockHashOrNumber) {
 
       if (web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber) > 0) {
+        console.log("Capture transactions");
         var d =0;
         for (;d <web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);d++) {
               var txData = web3.eth.getTransactionFromBlock(desiredBlockHashOrNumber,d);
@@ -96,6 +97,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             var jdata = JSON.parse(data);
         } catch (e) {
             console.error(e);
+            batchSize = 10;
             if (batchSize > 1) {
                 for (var b=0; b<batchSize; b++) {
                     grabInternalTxs(web3, batchNum+b, 1);
@@ -105,7 +107,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             }
             return
         }
-          console.log("\n Here comes itx: " + data);
+          console.log("\n Internal tx: " + data);
           for (d in jdata.result) {
             var j = jdata.result[d];
             if (j.action.call)
@@ -130,6 +132,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             j.subtraces = web3.toDecimal(j.subtraces);
             j.transactionPosition = web3.toDecimal(j.transactionPosition);
             j.blockNumber = web3.toDecimal(j.blockNumber);
+
             writeTxToDB(j);
           }
       });

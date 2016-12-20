@@ -26,14 +26,14 @@
                  <div ng-repeat="t in latest_blocks track by $index" class="todo-tasklist-item item-border-green row" ng-class="(t.extraData.indexOf('Parity') > -1) ? 'item-border-red': '';(t.extraData.indexOf('Pool') > -1) ? 'item-border-blue': ''">
                      <!--TODO: color by known miners -->
                      <div class="col-sm-5">
-                         <span class="todo-tasklist-item-title"><i class="fa fa-cube"></i> <a href="/block/{{t.number}}">{{t.number}}</a></span><br>
+                         <span class="todo-tasklist-item-title"><i class="fa fa-cube"></i> <a href="/block/{{t.number}}">{{t.number}}</a>( {{t.transactions.length || 0}} txs)</span><br>
                          <span class="todo-tasklist-date">
                              <i class="fa fa-hourglass-o"></i>{{t.timestamp | timeDuration }} ago</span>
                      </div>
                      <div class="todo-tasklist-controls col-sm-7">
                          <div class="todo-tasklist-item-text"><a href="/addr/{{t.miner}}">{{t.extraData}}</a><br>
                          by <a href="/addr/{{t.miner}}">{{t.miner}}</a><br>
-                         {{t.transactions.length}} txns
+
                          </div>
                      </div>
                  </div>
