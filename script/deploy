@@ -1,0 +1,7 @@
+ssh isaac.mao@104.196.248.216 <<EOF
+  cd ~/orbiter
+  git pull
+  npm install --production
+  forever restartall
+  exit
+EOF
