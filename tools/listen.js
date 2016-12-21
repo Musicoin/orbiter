@@ -132,7 +132,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             j.subtraces = web3.toDecimal(j.subtraces);
             j.transactionPosition = web3.toDecimal(j.transactionPosition);
             j.blockNumber = web3.toDecimal(j.blockNumber);
-
+            j.timestamp = web3.eth.getBlock(blockHashOrNumber).timestamp;
             writeTxToDB(j);
           }
       });
