@@ -3,6 +3,8 @@
 
 <div class="row">
   <div class="col-md-6 col-sm-6">
+    <h1>Attention:</h1>
+    <h2>(Running on test blockchain)</h2>
     <summary-stats></summary-stats>
 
   </div>
@@ -15,9 +17,9 @@
                  <span class="caption-subject font-red bold uppercase">Blocks</span>
              </div>
              <div class="actions">
-                 <div class="btn-group">
+                  <div class="btn-group">
                      <a class="btn btn-med" ng-click="reloadBlocks()"><i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
-                     </a>
+                     </a><span ng-app ng-controller="autorefresh">Refreshing every {{rand}} sec... </span>
                  </div>
              </div>
          </div>

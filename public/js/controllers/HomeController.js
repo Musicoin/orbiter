@@ -1,5 +1,5 @@
 angular.module('BlocksApp').controller('HomeController', function($rootScope, $scope, $http, $timeout) {
-    $scope.$on('$viewContentLoaded', function() {   
+    $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         App.initAjax();
     });
@@ -7,6 +7,15 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
     var URL = '/data';
 
     $rootScope.isHome = true;
+
+    $scope.autorefresh= function() {
+      $scope.rand = 10;
+
+      (function update() {
+        $timeout(update, 1000);
+        $scope.reloadBlocks();
+      }());
+    }
 
     $scope.reloadBlocks = function() {
       $scope.blockLoading = true;
@@ -19,7 +28,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         $scope.latest_blocks = data.blocks;
       });
     }
-    
+
 
     $scope.reloadTransactions = function() {
       $scope.txLoading = true;
@@ -30,7 +39,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       }).success(function(data) {
         $scope.latest_txs = data.txs;
         $scope.txLoading = false;
-      });  
+      });
     }
 
     $scope.reloadBlocks();
@@ -54,7 +63,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       scope.stats.usdEth = 1;
 
 
-      
+
       $http.post(etcEthURL, {"action": "etceth"})
        .then(function(res){
           scope.stats.etcHashrate = res.data.etcHashrate;
@@ -79,4 +88,3 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       }
   }
 });
-
