@@ -12,7 +12,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       $scope.rand = 10;
 
       (function update() {
-        $timeout(update, 1000);
+        $timeout(update, 10000);
         $scope.reloadBlocks();
       }());
     }
