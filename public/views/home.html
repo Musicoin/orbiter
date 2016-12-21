@@ -16,10 +16,10 @@
                  <i class="fa fa-cubes font-red"></i>
                  <span class="caption-subject font-red bold uppercase">Blocks</span>
              </div>
-             <div class="actions">
+             <div class="actions"><span ng-app ng-controller="autorefresh">Refreshing in {{rand}} sec... </span>
                   <div class="btn-group">
                      <a class="btn btn-med" ng-click="reloadBlocks()"><i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
-                     </a><span ng-app ng-controller="autorefresh">Refreshing every {{rand}} sec... </span>
+                     </a>
                  </div>
              </div>
          </div>

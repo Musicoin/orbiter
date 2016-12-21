@@ -1,41 +1,20 @@
 <!-- BEGIN PAGE CONTENT-->
 <div class="row">
   <div class="col-md-12 portlet light">
-      <div class="portlet-title">
-        <div class="caption"><span ng-show="addr.isContract">Contract </span>Overview</div>
-      </div>
+
       <div class="portlet-body">
         <div class="row">
             <div class="col-md-6 center">
               <div >
                 <span class="eth-stat-title">
-                  {{ addr.balance | number: 10 }} </span><br>
-                <span class="eth-stat-text">
-                  MUC Balance <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Note: Balance may not reflect transaction data if you have transactions resulting from Contract Internal Transactions. We are working on adding that functionality."></i>
-                  </span><br>
-                  <div class="margin-top-20">
-                  <span class="fade">{{ addr.ethfiat | number: 10 }}</span>
-                  </div>
-                  <div class="margin-top-20">
-                  0 <span class="eth-stat-text">Mined</span>
-                  </div>
-                  <div class="margin-top-20">
-                  {{ addr.count }} <span class="eth-stat-text">Transactions</span>
-                  </div>
+                  MUC {{ addr.balance | number: 10 }} <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Note: Balance may not reflect transaction data if you have transactions resulting from Contract Internal Transactions. We are working on adding that functionality."></i></span><br>
               </div>
             </div>
 
             <div class="col-md-6 center">
                 <div class="portlet">
                   <div class="portlet-body">
-
-                    <span class='btn blue-madison' ng-show="!isFollowing(addrHash)" ng-click="follow(addrHash)">WATCH <i class="fa fa-rss "></i></span>
-                    <span class='btn grey'  ng-show="isFollowing(addrHash)" ng-click="unFollow(addrHash)">WATCHING <i class="fa fa-check "></i></span>
-                    <div class="margin-top-20">
-                        {{ addr.follow_count }}0
-                        <span class="eth-stat-text">WATCHING</span>
-                    </div>
-                </div>
+                  </div>
               </div>
             </div>
 
@@ -49,7 +28,7 @@
         <div class="tabbable-line">
           <ul class="nav nav-tabs ">
               <li ng-class="{active: activeTab == 'tab_addr_1' || !activeTab}">
-                  <a href="#tab_addr_1" data-toggle="tab" aria-expanded="true"> Transactions </a>
+                  <a href="#tab_addr_1" data-toggle="tab" aria-expanded="true"> Transactions <span> (Total {{ addr.count }} )</span></a>
               </li>
               <li  ng-class="{active: activeTab == 'tab_addr_2'}" ng-show="addr.isContract">
                   <a href="#tab_addr_2" data-toggle="tab" aria-expanded="false"> Internal Transactions </a>
@@ -58,6 +37,7 @@
                   <a href="#tab_addr_3" data-toggle="tab" aria-expanded="false"> Contract Source </a>
               </li>
           </ul>
+
           <div class="tab-content">
             <div class="tab-pane table-container" ng-class="{active: activeTab == 'tab_addr_1' || !activeTab}" id="tab_addr_1"><!-- Datatable tab -->
 
