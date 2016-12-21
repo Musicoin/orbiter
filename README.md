@@ -17,9 +17,17 @@ Install mongodb:
 
 `parity --chain mus.json --tracing on --dapps-port 8848 d`
 
+the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/rust-musicoin/blob/master/mus.json).
+
 ## Populate the DB
 ### Run:
 
-`node ./tools/listen.js`
+`node ./tools/patch.js`
 
-Leave this running in the background to continuously fetch new blocks. There will be 2 modes which will be divided into separate scripts: listening mode and patching mode, temporarily set in config.json.
+It may take a while to update all history data from blockchain depends on how far you are from the most recent blocks. After the populating, you may run up listen.js to keep sync with the most recent chains. We suggest using "forever" method:
+
+```
+sudo npm install -g forever
+forever start listen.js
+```
+Leave this running in the background to continuously fetch new blocks.
