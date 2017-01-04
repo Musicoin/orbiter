@@ -100,7 +100,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             batchSize = 10;
             if (batchSize > 1) {
                 for (var b=0; b<batchSize; b++) {
-                    grabInternalTxs(web3, batchNum+b, 1);
+                    grabInternalTxs(web3, blockHashOrNumber+b, 1);
                 }
             } else {
                 console.error(post_data);
@@ -144,7 +144,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
 }
 
 var writeTxToDB = function(txData) {
-    return InternalTx.findOneAndUpdate(txData, txData, {upsert: true}, function( err, tx ){
+    return InternalTx.findOneAndUpdate({"transactionHash": txData.transactionHash}, txData, {upsert: true}, function( err, tx ){
         if ( typeof err !== 'undefined' && err ) {
             if (err.code == 11000) {
                 console.log('Skip: Duplicate key ' +
@@ -157,7 +157,7 @@ var writeTxToDB = function(txData) {
            }
         } else {
             console.log('DB successfully written for block number ' +
-                txData.blockNumber.toString() );
+                txData.blockNumber.toString() + " and tx:" +txData.transactionHash);
         }
       });
 }
