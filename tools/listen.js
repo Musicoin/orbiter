@@ -20,7 +20,7 @@ var listenBlockchain = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
 
-    //listenBlocks(config, web3);
+    listenBlocks(config, web3);
 
     setInterval(function(){
       if(!web3.isConnected()){
