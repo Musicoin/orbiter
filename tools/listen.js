@@ -16,12 +16,21 @@ var Transaction = mongoose.model( 'Transaction' );
 var InternalTx  = mongoose.model( 'InternalTransaction' );
 
 
-var grabBlocks = function(config) {
+var listenBlockchain = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
 
+    //listenBlocks(config, web3);
 
-    listenBlocks(config, web3);
+    setInterval(function(){
+      if(!web3.isConnected()){
+        web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'));
+        console.log("reconnected");
+
+      }
+      listenBlocks(config, web3);
+
+    },800000)
 
 }
 
@@ -364,7 +373,7 @@ if (!('blocks' in config) || !(Array.isArray(config.blocks))) {
 console.log('Using configuration:');
 console.log(config);
 
-grabBlocks(config);
+listenBlockchain(config);
 //patchBlocks(config);
 //var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
 //    config.gethPort.toString()));
