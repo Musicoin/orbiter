@@ -173,8 +173,7 @@ var getIndividualLog = function(req, res){
   var data = { draw: parseInt(req.body.draw) };
 
 
-  var txFind = InternalTx.find( { "action.callType" : "0",
-                  $or: [{"action.from": addr}, {"action.to": addr}] })
+  var txFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] })
                   .lean(true).sort('-blockNumber').skip(start).limit(limit)
 
   async.parallel([
@@ -185,8 +184,7 @@ var getIndividualLog = function(req, res){
         cb();
         return;
       }
-      InternalTx.find( { "action.callType" : "0",
-                  $or: [{"action.from": addr}, {"action.to": addr}] })
+      Transaction.find( { $or: [{"to": addr}, {"from": addr}]})
                 .count(function(err, count) {
                     data.recordsFiltered = count;
                     data.recordsTotal = count;
