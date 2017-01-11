@@ -1,5 +1,7 @@
 var mongoose = require( 'mongoose' );
 require( '../db-internal.js' );
+mongoose.Promise = global.Promise;
+
 var Block     = mongoose.model( 'Block' );
 var InternalTx     = mongoose.model( 'InternalTransaction' );
 var Transaction     = mongoose.model( 'Transaction' );
@@ -26,6 +28,7 @@ module.exports = function(app){
   */
   app.post('/addr', getAddr);
   app.post('/internal', getInternalTx);
+  app.post('/log', getIndividualLog);
   app.post('/tx', getTx);
   app.post('/block', getBlock);
   app.post('/data', getData);
@@ -48,7 +51,7 @@ var getAddr = function(req, res){
   var limit = parseInt(req.body.length);
   var start = parseInt(req.body.start);
 
-  var data = { draw: parseInt(req.body.draw), recordsFiltered: count, recordsTotal: count };
+  var data = { draw: "hi", recordsFiltered: count, recordsTotal: count };
 
   var addrFind = InternalTx.find( { $or: [{"action.to": addr}, {"action.from": addr}] })
 
@@ -122,8 +125,8 @@ var getInternalTx = function(req, res){
   var data = { draw: parseInt(req.body.draw) };
 
 
-  var txFind = InternalTx.find( { "action.callType" : "call",
-                  $or: [{"action.from": addr}, {"action.to": addr}] }, "action transactionHash blockNumber timestamp")
+  var txFind = InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
                   .lean(true).sort('-blockNumber').skip(start).limit(limit)
 
   async.parallel([
@@ -134,7 +137,7 @@ var getInternalTx = function(req, res){
         cb();
         return;
       }
-      InternalTx.find( { "action.callType" : "call",
+      InternalTx.find( { "action.callType" : "0",
                   $or: [{"action.from": addr}, {"action.to": addr}] })
                 .count(function(err, count) {
                     data.recordsFiltered = count;
@@ -159,7 +162,53 @@ var getInternalTx = function(req, res){
 
 };
 
+var getIndividualLog = function(req, res){
 
+  var addr = req.body.addr.toLowerCase();
+  var limit = parseInt(req.body.length);
+  var start = parseInt(req.body.start);
+
+  var count = req.body.count;
+
+  var data = { draw: parseInt(req.body.draw) };
+
+
+  var txFind = InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
+                  .lean(true).sort('-blockNumber').skip(start).limit(limit)
+
+  async.parallel([
+    function(cb) {
+      if (count) {
+        data.recordsFiltered = parseInt(count);
+        data.recordsTotal = parseInt(count);
+        cb();
+        return;
+      }
+      InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
+                .count(function(err, count) {
+                    data.recordsFiltered = count;
+                    data.recordsTotal = count;
+                    cb()
+                  });
+    }, function(cb) {
+      txFind.exec("find", function (err, docs) {
+        if (docs)
+          data.data = docs;
+        else
+          data.data = [];
+        cb();
+      });
+    }
+
+    ], function(err, results) {
+      if (err) console.error(err);
+      res.write(JSON.stringify(data));
+      res.end();
+    })
+
+};
 
 /*
   Fetch data from DB
