@@ -105,12 +105,54 @@ var getTx = function(req, res){
       res.write(JSON.stringify({}));
       res.end();
     } else {
+
+
+      var count = 10;
+      var data = [];
+      // try to find internal tx
+      var txFind = InternalTx.find( { "transactionHash" : tx })
+                      .lean(true).sort('-blockNumber')
+
+      async.parallel([
+        function(cb) {
+          if (count) {
+            data.recordsFiltered = parseInt(count);
+            data.recordsTotal = parseInt(count);
+            cb();
+            return;
+          }
+          InternalTx.find( {"transactionHash" : tx})
+                    .count(function(err, count) {
+                        data.recordsFiltered = count;
+                        data.recordsTotal = count;
+                        cb()
+                      });
+        }, function(cb) {
+          txFind.exec("find", function (err, docs) {
+            if (docs){
+              for(var i=0; i<docs.length; i++)
+               docs[i].action.value = filters.calEth(docs[i].action.value );
+              if ( docs.length ==1 && (doc.to == docs[0].action.to))
+                doc.itx = []
+              else
+                doc.itx = docs
+              doc.value = filters.calEth(doc.value);
+              //console.log("result" + JSON.stringify(doc));
+              res.write(JSON.stringify(doc));
+              res.end();
+            }
+            else
+              doc.itx = [];
+            cb();
+          });
+        }
+
+        ], function(err, results) {
+              if (err) console.error(err);
+        })
       // filter transactions
       //var txDocs = filters.filterBlock(doc, "hash", tx)
-      doc.value = filters.calEth(doc.value);
-      console.log("result" + JSON.stringify(doc));
-      res.write(JSON.stringify(doc));
-      res.end();
+
     }
   });
 
@@ -258,6 +300,7 @@ var getLowTx = function(req, res){
     })
 
 };
+
 
 /*
   Fetch data from DB
