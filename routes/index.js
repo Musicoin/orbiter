@@ -110,7 +110,7 @@ var getTx = function(req, res){
       var count = 10;
       var data = [];
       // try to find internal tx
-      var txFind = InternalTx.find( { "transactionHash" : tx })
+      var txFind = InternalTx.find( {"transactionHash" : tx, "subtraces":0})
                       .lean(true).sort('-blockNumber')
 
       async.parallel([
@@ -121,7 +121,7 @@ var getTx = function(req, res){
             cb();
             return;
           }
-          InternalTx.find( {"transactionHash" : tx})
+          InternalTx.find( {"transactionHash" : tx, "subtraces":0})
                     .count(function(err, count) {
                         data.recordsFiltered = count;
                         data.recordsTotal = count;
@@ -132,6 +132,7 @@ var getTx = function(req, res){
             if (docs){
               for(var i=0; i<docs.length; i++)
                docs[i].action.value = filters.calEth(docs[i].action.value );
+               // if there's no internal tx or same to the contract address, no need to record it
               if ( docs.length ==1 && (doc.to == docs[0].action.to))
                 doc.itx = []
               else

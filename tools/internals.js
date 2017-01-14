@@ -10,7 +10,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var mongoose = require( 'mongoose' );
 var InternalTx     = mongoose.model( 'InternalTransaction' );
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 1;
 
 function grabInternalTxs(batchNum, batchSize) {
   var fromBlock = web3.toHex(batchNum);
@@ -18,8 +18,7 @@ function grabInternalTxs(batchNum, batchSize) {
   var post_data = '{ \
     "jsonrpc":"2.0", \
     "method":"trace_filter", \
-    "params":[{"fromBlock":"' + fromBlock + '", \
-    "toBlock":"' + toBlock + '"}], \
+    "params":[{"fromBlock":"' + fromBlock + '"}], \
     "id":' + batchNum + '}';
 
   var post_options = {
@@ -51,8 +50,8 @@ function grabInternalTxs(batchNum, batchSize) {
             }
             return
         }
-          console.log(data);
           for (d in jdata.result) {
+
             var j = jdata.result[d];
             if (j.action.call)
               j.action = j.action.call;
@@ -80,7 +79,6 @@ function grabInternalTxs(batchNum, batchSize) {
           }
       });
   });
-
   post_req.write(post_data);
   post_req.end();
 
@@ -99,40 +97,48 @@ var writeTxToDB = function(txData) {
                process.exit(9);
            }
         } else {
-            console.log('DB successfully written for block number ' +
-                txData.blockNumber.toString() );
+            console.log('DB written with tx ' +
+                txData.transactionHash.toString() );
         }
       });
 }
 
 var getLatestBlocks = function(latest, start) {
   var count = start;
-
-  setInterval(function() {
+  var idInterval;
+  idInterval= setInterval(function() {
       grabInternalTxs(count, BATCH_SIZE);
       count += BATCH_SIZE;
-      if (count > latest)
-        return;
-  }, 1000);
+      console.log("current:"+count + " vs latest:"+latest)
+      if (count > latest){
+        clearInterval(idInterval);
+      }
+  }, 3000);
 }
 
 
 mongoose.connect( 'mongodb://localhost/blockDB' );
 mongoose.set('debug', true);
 
-var minutes = 5;
-statInterval = minutes * 60 * 1000;
-setInterval(function() {
-  // get latest
-  try {
-      InternalTx.findOne({}, "blockNumber").lean(true).sort("-blockNumber")
-          .exec(function(err, doc) {
-            var last = doc.blockNumber;
-            var latest = web3.eth.blockNumber;
-            getLatestBlocks(latest, last);
-          });
-  } catch (e) {
-    console.error(e);
-    // wait and try again
-  }
-}, statInterval);
+function start(){
+    var minutes = 2;
+    statInterval = minutes * 60 * 1000;
+    setInterval(function() {
+      // get latest
+      try {
+          InternalTx.findOne({}, "blockNumber").lean(true).sort("-blockNumber")
+              .exec(function(err, doc) {
+                var last = doc.blockNumber;
+                var latest = web3.eth.blockNumber;
+                getLatestBlocks(latest, last);
+              });
+      } catch (e) {
+        console.error(e);
+        // wait and try again
+      }
+    }, statInterval);
+}
+
+start();
+//var latest = web3.eth.blockNumber;
+//getLatestBlocks(latest, latest)
