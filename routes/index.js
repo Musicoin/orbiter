@@ -97,7 +97,7 @@ var getTx = function(req, res){
   var tx = req.body.tx.toLowerCase();
   console.log("findinging: " +tx)
 
-  var txFind = Transaction.findOne( { "hash" : tx }, "hash value blockNumber timestamp gas gasPrice input nonce from to")
+  var txFind = Transaction.findOne( { "hash" : tx }, "hash value blockNumber timestamp gas gasUsed gasPrice input nonce from to")
                   .lean(true);
   txFind.exec(function (err, doc) {
     if (!doc){

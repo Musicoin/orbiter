@@ -47,10 +47,11 @@ var Transaction = new Schema(
     "to": String,
     "value": String,
     "gas": Number,
+    "gasUsed": Number,
     "gasPrice": String,
     "timestamp": Number,
     "input": String
-});
+}, { strict: false });
 
 mongoose.model('Block', Block);
 mongoose.model('Contract', Contract);

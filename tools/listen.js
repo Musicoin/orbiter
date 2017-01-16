@@ -48,6 +48,7 @@ var getTx = function(web3,desiredBlockHashOrNumber) {
         for (;d <web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);d++) {
               var txData = web3.eth.getTransactionFromBlock(desiredBlockHashOrNumber,d);
               txData.timestamp = web3.eth.getBlock(desiredBlockHashOrNumber).timestamp;
+              txData.gasUsed = web3.eth.getTransactionReceipt(txData.hash).gasUsed;
               new Transaction(txData).save();
               if ( typeof err !== 'undefined' && err ) {
                   if (err.code == 11000) {
@@ -111,23 +112,30 @@ function grabInternalTxs(web3, blockHashOrNumber) {
           //console.log("\n Internal tx: " + data);
           for (d in jdata.result) {
             var j = jdata.result[d];
-            if (j.action.call)
-              j.action = j.action.call;
-            else if (j.action.create)
-              j.action = j.action.create;
-            else if (j.action.suicide)
-              j.action = j.action.suicide;
+            try{
+              if (j.action.call)
+                j.action = j.action.call;
+              else if (j.action.create)
+                j.action = j.action.create;
+              else if (j.action.suicide)
+                j.action = j.action.suicide;
 
-            if (j.action.callType)
-              j.action.callType = Object.keys(j.action.callType)[0]
-            if (j.result.call)
-              j.result = j.result.call;
-            else if (j.result.create)
-              j.result = j.result.create;
-            else if (j.result.suicide)
-              j.result = j.result.suicide;
-            if (j.action.gas)
-              j.action.gas = web3.toDecimal(j.action.gas);
+              if (j.action.callType)
+                j.action.callType = Object.keys(j.action.callType)[0]
+              if (j.result.call)
+                j.result = j.result.call;
+              else if (j.result.create)
+                j.result = j.result.create;
+              else if (j.result.suicide)
+                j.result = j.result.suicide;
+              if (j.action.gas)
+                j.action.gas = web3.toDecimal(j.action.gas);
+              if (j.result.gasUsed)
+                j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
+              }
+              catch(err){
+                console.log(err)
+              }
             if (j.result.gasUsed)
               j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
             j.subtraces = web3.toDecimal(j.subtraces);
