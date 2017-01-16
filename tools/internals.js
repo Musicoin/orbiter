@@ -141,4 +141,4 @@ function start(){
 
 start();
 //var latest = web3.eth.blockNumber;
-//getLatestBlocks(latest, latest)
+getLatestBlocks(141397, 141397)

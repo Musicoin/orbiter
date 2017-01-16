@@ -73,7 +73,8 @@ function grabInternalTxs(web3, blockHashOrNumber) {
   var post_data = '{ \
     "jsonrpc":"2.0", \
     "method":"trace_filter", \
-    "params":[{"fromBlock":"' + fromBlock + '"}], \
+    "params":[{"fromBlock":"' + fromBlock + '", \
+    "toBlock":"' + toBlock + '"}], \
     "id":' + id + '}';
 
   var post_options = {
