@@ -30,7 +30,7 @@ var listenBlocks = function(config, web3) {
     });
 }
 
-var watchBlocks = function(config, web3) {
+var watchBlocks = function(web3) {
     var newBlocks = web3.eth.filter("latest");
     newBlocks.isSynching(function (error, log) {
 
@@ -48,4 +48,4 @@ var watchBlocks = function(config, web3) {
 
 var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 
-watchBlocks(config, web3);
+watchBlocks(web3);
