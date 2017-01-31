@@ -31,18 +31,23 @@ var listenBlocks = function(config, web3) {
 }
 
 var watchBlocks = function(web3) {
-    var newBlocks = web3.eth.filter("latest");
-    newBlocks.isSynching(function (error, log) {
+  web3.eth.isSyncing(function(error, sync){
+      if(!error) {
+          // stop all app activity
+          if(sync === true) {
+             // we use `true`, so it stops all filters, but not the web3.eth.syncing polling
+             web3.reset(true);
 
-        if(error) {
-            console.log('Error: ' + error);
-        } else if (log == null) {
-            console.log('Warning: null block hash');
-        } else {
-            console(config, web3, log);
-        }
+          // show sync info
+          } else if(sync) {
+             console.log(sync.currentBlock);
 
-    });
+          // re-gain app operation
+          } else {
+              // run your app init function...
+          }
+      }
+  });
 }
 
 
