@@ -20,8 +20,14 @@ var grabBlocks = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
 
-
     listenBlocks(config, web3);
+    setInterval(function(){
+          if(!web3.isConnected()){
+            console.log("web 3 not connected, trying to reconnect");
+            web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'));
+            listenBlocks(config, web3);
+          }
+    },8000)
 
 }
 

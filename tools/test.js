@@ -1,19 +1,10 @@
-require( '../db.js' );
-require('../db-internal.js')
 
-var express = require('express');
-var app = express();
 
 var fs = require('fs');
 
 var Web3 = require('web3');
 var http = require('http');
 
-
-var mongoose = require( 'mongoose' );
-var Block       = mongoose.model( 'Block' );
-var Transaction = mongoose.model( 'Transaction' );
-var InternalTx  = mongoose.model( 'InternalTransaction' );
 
 var listenBlocks = function(config, web3) {
     var newBlocks = web3.eth.filter("latest");
@@ -24,7 +15,6 @@ var listenBlocks = function(config, web3) {
         } else if (log == null) {
             console.log('Warning: null block hash');
         } else {
-            grabBlock(config, web3, log);
         }
 
     });
@@ -47,10 +37,22 @@ var watchBlocks = function(web3) {
               // run your app init function...
           }
       }
+      else {
+          console.log ("something wrong with the chain");
+      }
   });
 }
 
 
-var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+setInterval(function(){
+      if(!web3.isConnected()){
+        console.log("web 3 not connected, trying to reconnect");
 
-watchBlocks(web3);
+        web3.setProvider(new Web3.providers.HttpProvider('http://localhost:8545'));
+
+      }
+      listenBlocks(config, web3);
+
+},8000)
+
+//watchBlocks(web3);
