@@ -7,7 +7,7 @@
         "minimumDifficulty": "0x20000",
         "difficultyBoundDivisor": "0x800",
         "durationLimit": "0xd",
-        "blockReward": "0x1B1AE4D6E2EF500000",
+        "blockReward": "0x1105A0185B50A80000",
         "registrar": "0x00756cf8159095948496617f5fb17ed95059f536",
         "homesteadTransition": 9223372036854775807,
         "eip150Transition": 9223372036854775807,
@@ -22,7 +22,7 @@
     "accountStartNonce": "0x0",
     "maximumExtraDataSize": "0x20",
     "minGasLimit": "0x1388",
-    "networkID": 314
+    "networkID": 3141
   },
   "genesis": {
     "seal": {
