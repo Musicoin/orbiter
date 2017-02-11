@@ -59,6 +59,8 @@ mongoose.model('Transaction', Transaction);
 module.exports.Block = mongoose.model('Block');
 module.exports.Contract = mongoose.model('Contract');
 module.exports.Transaction = mongoose.model('Transaction');
+var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
+                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
 
-mongoose.connect( 'mongodb://localhost/blockDB' );
+mongoose.connect( 'mongodb://localhost/blockDB', options);
 mongoose.set('debug', true);

@@ -116,8 +116,9 @@ var getLatestBlocks = function(latest, start) {
   }, 3000);
 }
 
-
-mongoose.connect( 'mongodb://localhost/blockDB' );
+var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
+                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
+mongoose.connect( 'mongodb://localhost/blockDB', options );
 mongoose.set('debug', true);
 
 function start(){

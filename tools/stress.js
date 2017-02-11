@@ -9,12 +9,12 @@ var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var counter = 5000;
 
 function payout() {
-   web3.personal.unlockAccount('0x15b64d20202475b2ef8c8544e743f36eafe7507c',"mybaby");
+   web3.personal.unlockAccount('0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b',"WMLWbaM5Tcoins");
 
    web3.eth.sendTransaction({
-   from: '0x15b64d20202475b2ef8c8544e743f36eafe7507c',
-   to: '0x008d4c913ca41f1f8d73b43d8fa536da423f1fb4',
-   value:  web3.toWei(counter % 10, "ether")});
+   from: '0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b',
+   to: '0x55a00bc3b44e84728091d0a8c80400a08bcb6a43',
+   value:  web3.toWei(counter % 3, "ether")});
 
 }
 
@@ -30,7 +30,7 @@ function forever() {
 
     counter--;
     if (counter > 0) {
-        setTimeout(forever, 3000);
+        setTimeout(forever, 5000);
     }
 }
 

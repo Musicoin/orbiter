@@ -8,9 +8,10 @@ var mongoose = require( 'mongoose' );
 var BlockStat = require( '../db-stats.js' ).BlockStat;
 
 var updateStats = function() {
-    var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545')); 
-
-    mongoose.connect( 'mongodb://localhost/blockDB' );
+    var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+    var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
+                    replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
+    mongoose.connect( 'mongodb://localhost/blockDB' ,options);
     mongoose.set('debug', true);
 
     var latestBlock = web3.eth.blockNumber;
@@ -48,7 +49,7 @@ var getStats = function(web3, blockNumber, nextBlock, endBlock) {
 }
 
 /**
-  * Checks if the a record exists for the block number 
+  * Checks if the a record exists for the block number
   *     if record exists: abort
   *     if record DNE: write a file for the block
   */
@@ -70,18 +71,18 @@ var checkBlockDBExistsThenWrite = function(web3, blockData, nextTime) {
             new BlockStat(stat).save( function( err, s, count ){
                 console.log(s)
                 if ( typeof err !== 'undefined' && err ) {
-                   console.log('Error: Aborted due to error on ' + 
-                        'block number ' + blockData.number.toString() + ': ' + 
+                   console.log('Error: Aborted due to error on ' +
+                        'block number ' + blockData.number.toString() + ': ' +
                         err);
                    process.exit(9);
                 } else {
                     console.log('DB successfully written for block number ' +
-                        blockData.number.toString() );    
-                    getStats(web3, blockData.number - 1, blockData);     
+                        blockData.number.toString() );
+                    getStats(web3, blockData.number - 1, blockData);
                 }
             });
         } else {
-            console.log('Aborting because block number: ' + blockData.number.toString() + 
+            console.log('Aborting because block number: ' + blockData.number.toString() +
                 ' already exists in DB.');
             return;
         }
