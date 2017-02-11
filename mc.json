@@ -22,7 +22,7 @@
     "accountStartNonce": "0x0",
     "maximumExtraDataSize": "0x20",
     "minGasLimit": "0x1388",
-    "networkID": 995913
+    "networkID": 7762959
   },
   "genesis": {
     "seal": {
