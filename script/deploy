@@ -1,4 +1,4 @@
-ssh jenkins@104.198.135.131 <<EOF
+ssh jenkins@104.196.252.27  <<EOF
   sudo su
   cd /musicoin/orbiter
   git pull
