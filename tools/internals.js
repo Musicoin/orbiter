@@ -89,15 +89,15 @@ function grabInternalTxs(batchNum, batchSize) {
 }
 
 var writeTxToDB = function(txData) {
-  try { 
+  try {
     InternalTx.findOneAndUpdate(txData, txData, {upsert: true}, function( err, tx ){
         if ( typeof err !== 'undefined' && err ) {
             if (err.code == 11000) {
-                console.log('Skip: Duplicate key ' + 
-                txData.number.toString() + ': ' + 
+                console.log('Skip: Duplicate key ' +
+                txData.number.toString() + ': ' +
                 err);
             } else {
-               console.log('Error: Aborted due to error: ' + 
+               console.log('Error: Aborted due to error: ' +
                     err);
            }
         } else {
@@ -106,7 +106,7 @@ var writeTxToDB = function(txData) {
         }
       });
   } catch (e) {
-    console.error(e); 
+    console.error(e);
   }
   return;
 }
@@ -124,7 +124,7 @@ var getLatestBlocks = function(latest, start) {
       console.error(e);
       // wait and try again
     }
-  }, 1000);  
+  }, 1000);
 }
 
 
@@ -134,7 +134,7 @@ mongoose.set('debug', true);
 var minutes = 5;
 statInterval = minutes * 60 * 1000;
 setInterval(function() {
-  // get latest 
+  // get latest
   try {
       InternalTx.findOne({}, "blockNumber").lean(true).sort("-blockNumber")
           .exec(function(err, doc) {
@@ -147,5 +147,3 @@ setInterval(function() {
     // wait and try again
   }
 }, statInterval);
-
-
