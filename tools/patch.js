@@ -1,7 +1,4 @@
-// define basic functions to read blocks and transations
-
 require( '../db.js' );
-require('../db-internal.js')
 
 var express = require('express');
 var app = express();
@@ -9,18 +6,14 @@ var app = express();
 var fs = require('fs');
 
 var Web3 = require('web3');
-var http = require('http');
-
 
 var mongoose = require( 'mongoose' );
-var Block       = mongoose.model( 'Block' );
-var Transaction = mongoose.model( 'Transaction' );
-var InternalTx  = mongoose.model( 'InternalTransaction' );
-
+var Block     = mongoose.model( 'Block' );
 
 var grabBlocks = function(config) {
     var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
         config.gethPort.toString()));
+
 
         setTimeout(function() {
             grabBlock(config, web3, config.blocks.pop());
@@ -41,128 +34,6 @@ var listenBlocks = function(config, web3) {
         }
 
     });
-}
-
-
-
-var getTx = function(web3,desiredBlockHashOrNumber) {
-      console.log(desiredBlockHashOrNumber);
-      if (web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber) > 0) {
-        var d =0;
-        for (;d <web3.eth.getBlockTransactionCount(desiredBlockHashOrNumber);d++) {
-              var txData = web3.eth.getTransactionFromBlock(desiredBlockHashOrNumber,d);
-              txData.timestamp = web3.eth.getBlock(desiredBlockHashOrNumber).timestamp;
-              new Transaction(txData).save();
-              if ( typeof err !== 'undefined' && err ) {
-                  if (err.code == 11000) {
-                      console.log('Skip: Duplicate key ' +
-                      err);
-                  } else {
-                     console.log('Error: Aborted due to error: ' +
-                          err);
-                     process.exit(9);
-                 }
-              } else {
-              console.log('DB successfully written for tx ' + txData.hash);
-              }
-        }
-    }
-}
-
-function grabInternalTxs(web3, blockHashOrNumber) {
-
-  var fromBlock = web3.toHex(web3.eth.getBlock(blockHashOrNumber).number);
-  var toBlock = fromBlock;
-  var id = web3.eth.getBlock(blockHashOrNumber).number;
-  var post_data = '{ \
-    "jsonrpc":"2.0", \
-    "method":"trace_filter", \
-    "params":[{"fromBlock":"' + fromBlock + '"}], \
-    "id":' + id + '}';
-
-  var post_options = {
-      host: 'localhost',
-      port: '8545',
-      path: '/',
-      method: 'POST',
-      headers: { "Content-Type": "application/json" }
-  };
-
-  var post_req = http.request(post_options, function(res) {
-
-      res.setEncoding('utf8');
-      var data;
-      res.on('data', function (chunk) {
-        if (chunk)
-            data = chunk;
-      });
-      res.on('end', function() {
-        try {
-            var jdata = JSON.parse(data);
-        } catch (e) {
-            console.error(e);
-            batchsize = 10;
-            if (batchsize > 1) {
-                for (var b=0; b<batchSize; b++) {
-                    grabInternalTxs(web3, batchNum+b, 1);
-                }
-            } else {
-                console.error(post_data);
-            }
-            return
-        }
-          console.log("\n Here comes itx: " + data);
-          for (d in jdata.result) {
-            var j = jdata.result[d];
-            if (j.action.call)
-              j.action = j.action.call;
-            else if (j.action.create)
-              j.action = j.action.create;
-            else if (j.action.suicide)
-              j.action = j.action.suicide;
-
-            if (j.action.callType)
-              j.action.callType = Object.keys(j.action.callType)[0]
-            if (j.result.call)
-              j.result = j.result.call;
-            else if (j.result.create)
-              j.result = j.result.create;
-            else if (j.result.suicide)
-              j.result = j.result.suicide;
-            if (j.action.gas)
-              j.action.gas = web3.toDecimal(j.action.gas);
-            if (j.result.gasUsed)
-              j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
-            j.subtraces = web3.toDecimal(j.subtraces);
-            j.transactionPosition = web3.toDecimal(j.transactionPosition);
-            j.blockNumber = web3.toDecimal(j.blockNumber);
-            writeTxToDB(j);
-          }
-      });
-  });
-  console.log(post_data);
-  post_req.write(post_data);
-  post_req.end();
-
-}
-
-var writeTxToDB = function(txData) {
-    return InternalTx.findOneAndUpdate(txData, txData, {upsert: true}, function( err, tx ){
-        if ( typeof err !== 'undefined' && err ) {
-            if (err.code == 11000) {
-                console.log('Skip: Duplicate key ' +
-                txData.number.toString() + ': ' +
-                err);
-            } else {
-               console.log('Error: Aborted due to error: ' +
-                    err);
-               process.exit(9);
-           }
-        } else {
-            console.log('DB successfully written for block number ' +
-                txData.blockNumber.toString() );
-        }
-      });
 }
 
 var grabBlock = function(config, web3, blockHashOrNumber) {
@@ -199,14 +70,11 @@ var grabBlock = function(config, web3, blockHashOrNumber) {
                     desiredBlockHashOrNumber);
             }
             else {
-                getTx(web3, desiredBlockHashOrNumber);
-                grabInternalTxs(web3, desiredBlockHashOrNumber);
-
                 if('terminateAtExistingDB' in config && config.terminateAtExistingDB === true) {
                     checkBlockDBExistsThenWrite(config, blockData);
                 }
                 else {
-                  writeBlockToDB(config, blockData);
+                    writeBlockToDB(config, blockData);
                 }
                 if('listenOnly' in config && config.listenOnly === true)
                     return;
@@ -285,7 +153,6 @@ var checkBlockDBExistsThenWrite = function(config, blockData) {
 
     })
 }
-
 
 /*
   Patch Missing Blocks
@@ -373,8 +240,5 @@ if (!('blocks' in config) || !(Array.isArray(config.blocks))) {
 console.log('Using configuration:');
 console.log(config);
 
-//grabBlocks(config);
+// grabBlocks(config);
 patchBlocks(config);
-//var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:' +
-//    config.gethPort.toString()));
-//getTx(web3, 103748);

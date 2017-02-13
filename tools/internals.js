@@ -10,7 +10,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var mongoose = require( 'mongoose' );
 var InternalTx     = mongoose.model( 'InternalTransaction' );
 
-const BATCH_SIZE = 1;
+const BATCH_SIZE = 10;
 
 function grabInternalTxs(batchNum, batchSize) {
   var fromBlock = web3.toHex(batchNum);
@@ -18,7 +18,8 @@ function grabInternalTxs(batchNum, batchSize) {
   var post_data = '{ \
     "jsonrpc":"2.0", \
     "method":"trace_filter", \
-    "params":[{"fromBlock":"' + fromBlock + '"}], \
+    "params":[{"fromBlock":"' + fromBlock + '", \
+    "toBlock":"' + toBlock + '"}], \
     "id":' + batchNum + '}';
 
   var post_options = {
@@ -50,8 +51,8 @@ function grabInternalTxs(batchNum, batchSize) {
             }
             return
         }
+          // console.log(data);
           for (d in jdata.result) {
-
             var j = jdata.result[d];
             if (j.action.call)
               j.action = j.action.call;
@@ -75,71 +76,76 @@ function grabInternalTxs(batchNum, batchSize) {
             j.subtraces = web3.toDecimal(j.subtraces);
             j.transactionPosition = web3.toDecimal(j.transactionPosition);
             j.blockNumber = web3.toDecimal(j.blockNumber);
+            var block = web3.eth.getBlock(j.blockNumber);
+            j.timestamp = block.timestamp;
             writeTxToDB(j);
           }
       });
   });
+
   post_req.write(post_data);
   post_req.end();
 
 }
 
 var writeTxToDB = function(txData) {
-    return InternalTx.findOneAndUpdate(txData, txData, {upsert: true}, function( err, tx ){
+  try { 
+    InternalTx.findOneAndUpdate(txData, txData, {upsert: true}, function( err, tx ){
         if ( typeof err !== 'undefined' && err ) {
             if (err.code == 11000) {
-                console.log('Skip: Duplicate key ' +
-                txData.number.toString() + ': ' +
+                console.log('Skip: Duplicate key ' + 
+                txData.number.toString() + ': ' + 
                 err);
             } else {
-               console.log('Error: Aborted due to error: ' +
+               console.log('Error: Aborted due to error: ' + 
                     err);
-               process.exit(9);
            }
         } else {
-            console.log('DB written with tx ' +
-                txData.transactionHash.toString() );
+            console.log('DB successfully written for block number ' +
+                txData.blockNumber.toString() );
         }
       });
+  } catch (e) {
+    console.error(e); 
+  }
+  return;
 }
 
 var getLatestBlocks = function(latest, start) {
   var count = start;
-  var idInterval;
-  idInterval= setInterval(function() {
+
+  setInterval(function() {
+    try {
       grabInternalTxs(count, BATCH_SIZE);
       count += BATCH_SIZE;
-      console.log("current:"+count + " vs latest:"+latest)
-      if (count > latest){
-        clearInterval(idInterval);
-      }
-  }, 3000);
+      if (count > latest)
+        return;
+    } catch (e) {
+      console.error(e);
+      // wait and try again
+    }
+  }, 1000);  
 }
 
-var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
-                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
-mongoose.connect( 'mongodb://localhost/blockDB', options );
+
+mongoose.connect( 'mongodb://localhost/blockDB' );
 mongoose.set('debug', true);
 
-function start(){
-    var minutes = 2;
-    statInterval = minutes * 60 * 1000;
-    setInterval(function() {
-      // get latest
-      try {
-          InternalTx.findOne({}, "blockNumber").lean(true).sort("-blockNumber")
-              .exec(function(err, doc) {
-                var last = doc.blockNumber;
-                var latest = web3.eth.blockNumber;
-                getLatestBlocks(latest, last);
-              });
-      } catch (e) {
-        console.error(e);
-        // wait and try again
-      }
-    }, statInterval);
-}
+var minutes = 5;
+statInterval = minutes * 60 * 1000;
+setInterval(function() {
+  // get latest 
+  try {
+      InternalTx.findOne({}, "blockNumber").lean(true).sort("-blockNumber")
+          .exec(function(err, doc) {
+            var last = doc.blockNumber;
+            var latest = web3.eth.blockNumber;
+            getLatestBlocks(latest, last);
+          });
+  } catch (e) {
+    console.error(e);
+    // wait and try again
+  }
+}, statInterval);
 
-start();
-//var latest = web3.eth.blockNumber;
-getLatestBlocks(141397, 141397)
+
