@@ -35,7 +35,6 @@ module.exports = function(app){
   app.post('/block', getBlock);
   app.post('/data', getData);
 
-  app.post('/daorelay', DAO);
   app.post('/web3relay', web3relay.data);
   app.post('/compile', compile);
 
@@ -55,7 +54,7 @@ var getAddr = function(req, res){
 
   var data = { draw: "hi", recordsFiltered: count, recordsTotal: count };
 
-  var addrFind = InternalTx.find( { $or: [{"action.to": addr}, {"action.from": addr}] })
+  var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] })
 
   addrFind.lean(true).sort('-blockNumber').skip(start).limit(limit)
           .exec("find", function (err, docs) {

@@ -6,8 +6,8 @@ var BigNumber = require('bignumber.js');
 */
 function filterTX(txs, value) {
   return txs.map(function(tx){
-    return [tx.transactionHash, tx.blockNumber, tx.action.from, tx.action.to,
-            etherUnits.toEther(new BigNumber(tx.action.value), 'wei'), tx.action.gas, tx.timestamp]
+    return [tx.hash, tx.blockNumber, tx.from, tx.to,
+            etherUnits.toEther(new BigNumber(tx.value), 'wei'), tx.gas, tx.timestamp]
   })
 }
 
