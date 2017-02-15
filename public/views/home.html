@@ -1,56 +1,86 @@
+
+
 <div class="row">
+    <div class="col-md-6 col-sm-6">
+        <!-- BEGIN PORTLET-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption caption-md">
+                    <i class="fa fa-cubes font-red"></i>
+                    <span class="caption-subject font-red bold uppercase">Blocks</span>
+                </div>
+                <div class="actions"><span ng-app ng-controller="autorefresh">Refreshing in {{rand}} sec... </span>
+                     <div class="btn-group">
+                        <a class="btn btn-med" ng-click="reloadBlocks()"><i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="todo-tasklist scrollable">
+                    <div ng-repeat="t in latest_blocks track by $index" class="todo-tasklist-item item-border-green row" ng-class="(t.extraData.indexOf('Parity') > -1) ? 'item-border-red': '';(t.extraData.indexOf('Pool') > -1) ? 'item-border-blue': ''">
+                        <!--TODO: color by known miners -->
+                        <div class="col-sm-5">
+                            <span class="todo-tasklist-item-title"><i class="fa fa-cube"></i> <a href="/block/{{t.number}}">{{t.number}}</a></span><br>( {{t.txns}} txns)
+
+                        </div>
+                        <div class="todo-tasklist-controls col-sm-7">
+                            <div class="todo-tasklist-item-text"><span class="todo-tasklist-date">
+                                <i class="fa fa-hourglass-o"></i>{{t.timestamp | timeDuration }} ago, </span><br>
+                            mined by <a href="/addr/{{t.miner}}">{{t.miner}}</a><br>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+    <div class="col-md-6 col-sm-6" >
+        <!-- BEGIN PORTLET-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption caption-md">
+                    <i class="icon-bar-chart font-red"></i>
+                    <span class="caption-subject font-red bold uppercase">Transactions</span>
+                </div>
+                <div class="actions">
+                    <div class="btn-group">
+                        <a class="btn btn-med" ng-click="reloadTransactions()"><i class="fa fa-refresh" ng-class="{'fa-spin': txLoading}"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="general-item-list scrollable">
+                    <div class="item"  ng-repeat="t in latest_txs track by $index">
+                    <div class="item-head">
+                        <div class="truncate-txhash" style="float:left">
+                            TX <a href="/tx/{{t.hash}}" class="primary-link">{{t.hash}}</a>
+                        </div>
+                        <div class="item-date" style="float:right">{{t.timestamp | timeDuration }} ago</div>
+                    </div>
+                    <div class="todo-tasklist-controls">
+                      <span class="todo-tasklist-item-text">From <a href="/addr/{{t.from}}">{{t.from.substr(0,24)}}...</a></span>
+                      <span class="todo-tasklist-item-text">To <a href="/addr/{{t.to}}">{{t.to.substr(0,24)}}...</a></span><br>
+                      <div class="todo-tasklist-item-text" style="margin-top:4px;">{{t.value}} MC</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
 </div>
 
 <div class="row">
-  <div class="col-md-6 col-sm-6">
-    <h2>Up since Feb.10th,2017</h2>
-    <!--- <summary-stats></summary-stats> --->
-    <p>Musicoin’s blockchain is POW chain but CPU-friendly.
-      It generates 314 coins per block generated every 15 seconds to meet the micropayment needs for music consumption.
-      Because there's no pre-allocated(or pre-mined) funds to the founding members. Instead, 100% of the coins will be mined by the community, starting from genesis.
-    </p>
-    <span>
-      More info:
-      <p>Twitter: <a href="https://twitter.com/musicoins">https://twitter.com/musicoins</a></p>
-      <p>Slack: <a href="http://slack.musicoin.org">http://slack.musicoin.org</a></p>
-      <p>Github: <a href="https://github.com/Musicoin/">https://github.com/Musicoin/</a></p>
-    </span>
-  </div>
-  <div class="col-md-6 col-sm-6">
-     <!-- BEGIN PORTLET-->
-     <div class="portlet light">
-         <div class="portlet-title">
-             <div class="caption caption-md">
-                 <i class="fa fa-cubes font-red"></i>
-                 <span class="caption-subject font-red bold uppercase">Blocks</span>
-             </div>
-             <div class="actions"><span ng-app ng-controller="autorefresh">Refreshing in {{rand}} sec... </span>
-                  <div class="btn-group">
-                     <a class="btn btn-med" ng-click="reloadBlocks()"><i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
-                     </a>
-                 </div>
-             </div>
-         </div>
-         <div class="portlet-body">
-             <div class="todo-tasklist scrollable">
-                 <div ng-repeat="t in latest_blocks track by $index" class="todo-tasklist-item item-border-green row" ng-class="(t.extraData.indexOf('Parity') > -1) ? 'item-border-red': '';(t.extraData.indexOf('Pool') > -1) ? 'item-border-blue': ''">
-                     <!--TODO: color by known miners -->
-                     <div class="col-sm-5">
-                         <span class="todo-tasklist-item-title"><i class="fa fa-cube"></i> <a href="/block/{{t.number}}">{{t.number}}</a></span><br>( {{t.txns}} txns)
-
-                     </div>
-                     <div class="todo-tasklist-controls col-sm-7">
-                         <div class="todo-tasklist-item-text"><span class="todo-tasklist-date">
-                             <i class="fa fa-hourglass-o"></i>{{t.timestamp | timeDuration }} ago, </span><br>
-                         mined by <a href="/addr/{{t.miner}}">{{t.miner}}</a><br>
-
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
-     <!-- END PORTLET-->
- </div>
-
+    <div class="col-md-12 offset-md-1">
+        <div class="alert alert-info">
+          <p><a href="https://musicoin.org"><b>Musicoin</b></a>’s blockchain is POW chain but CPU-friendly.
+            It generates <b>314</b> coins per block generated every <b>15 seconds</b>(average) to meet the micropayment needs for music consumption.
+            Because there's no pre-allocated(or pre-mined) funds to the founding members. Instead, <b>100%</b> of the coins will be mined by the community, starting from genesis.
+          </p>
+        </div>
+    </div>
 </div>

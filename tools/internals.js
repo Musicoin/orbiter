@@ -133,6 +133,9 @@ mongoose.set('debug', true);
 
 var minutes = 5;
 statInterval = minutes * 60 * 1000;
+var latest = web3.eth.blockNumber;
+
+
 setInterval(function() {
   // get latest
   try {

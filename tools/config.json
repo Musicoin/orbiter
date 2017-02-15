@@ -3,5 +3,5 @@
     "blocks": [ {"start": 0, "end": "latest"}],
     "quiet": true,
     "terminateAtExistingDB": true,
-    "listenOnly": false
+    "listenOnly": true
 }

@@ -16,6 +16,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         $timeout(update, 1000);
         if ($scope.rand==0){
           $scope.reloadBlocks();
+          $scope.reloadTransactions();
           $scope.rand = 10
         }
       }());

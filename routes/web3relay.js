@@ -12,6 +12,7 @@ var etherUnits = require(__lib + "etherUnits.js")
 
 var extractTX = require('./filters').extractTX;
 var getLatestBlocks = require('./index').getLatestBlocks;
+var filterBlocks = require('./filters').filterBlocks;
 
 
 if (typeof web3 !== "undefined") {
@@ -20,7 +21,7 @@ if (typeof web3 !== "undefined") {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
-if (web3.isConnected()) 
+if (web3.isConnected())
   console.log("Web3 connection established");
 else
   throw "No connection";
@@ -47,7 +48,7 @@ exports.clientSocket = function(io) {
 
 exports.data = function(req, res){
   console.log(req.body)
-  
+
   if ("addr" in req.body) {
     var addr = req.body.addr.toLowerCase();
     var options = req.body.options;
@@ -56,7 +57,7 @@ exports.data = function(req, res){
 
     if (options.indexOf("balance") > -1) {
       try {
-        addrData["balance"] = web3.eth.getBalance(addr);  
+        addrData["balance"] = web3.eth.getBalance(addr);
         addrData["balance"] = etherUnits.toEther(addrData["balance"], 'wei');
       } catch(err) {
         console.error("AddrWeb3 error :" + err);
@@ -74,7 +75,7 @@ exports.data = function(req, res){
     if (options.indexOf("bytecode") > -1) {
       try {
          addrData["bytecode"] = web3.eth.getCode(addr);
-         if (addrData["bytecode"].length > 2) 
+         if (addrData["bytecode"].length > 2)
             addrData["isContract"] = true;
          else
             addrData["isContract"] = false;
@@ -83,7 +84,7 @@ exports.data = function(req, res){
         addrData = {"error": true};
       }
     }
-   
+
     res.write(JSON.stringify(addrData));
     res.end();
 
@@ -98,13 +99,30 @@ exports.data = function(req, res){
       } else {
         var ttx = tx;
         ttx.value = etherUnits.toEther( new BigNumber(tx.value), "wei");
+        //get timestamp from block
+        var block = web3.eth.getBlock(tx.blockNumber);
+        ttx.timestamp = block.timestamp;
         res.write(JSON.stringify(ttx));
       }
       res.end();
     });
 
+  } else if ("block" in req.body) {
+    var blockNum = parseInt(req.body.block);
+
+    web3.eth.getBlock(blockNum, function(err, block) {
+      if(err || !block) {
+        console.error("BlockWeb3 error :" + err)
+        res.write(JSON.stringify({"error": true}));
+      } else {
+        block.txns = web3.eth.getBlockTransactionCount(block.number);
+        res.write(JSON.stringify(filterBlocks(block)));
+      }
+      res.end();
+    });
+
   } else {
-  
+
     console.error("Invalid Request: " + action)
     res.status(400).send();
   }
@@ -112,4 +130,3 @@ exports.data = function(req, res){
 };
 
 exports.eth = web3.eth;
-  
