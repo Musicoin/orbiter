@@ -108,7 +108,7 @@ function grabInternalTxs(web3, blockHashOrNumber) {
             var jdata = JSON.parse(data);
         } catch (e) {
             console.error(e);
-            batchSize = 10;
+            batchSize = 1;
             if (batchSize > 1) {
                 for (var b=0; b<batchSize; b++) {
                     grabInternalTxs(web3, blockHashOrNumber+b, 1);
@@ -141,12 +141,12 @@ function grabInternalTxs(web3, blockHashOrNumber) {
                 j.action.gas = web3.toDecimal(j.action.gas);
               if (j.result.gasUsed)
                 j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
+              if (j.result.gasUsed)
+                j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
               }
               catch(err){
                 console.log(err)
               }
-            if (j.result.gasUsed)
-              j.result.gasUsed = web3.toDecimal(j.result.gasUsed);
             j.subtraces = web3.toDecimal(j.subtraces);
             j.transactionPosition = web3.toDecimal(j.transactionPosition);
             j.blockNumber = web3.toDecimal(j.blockNumber);
