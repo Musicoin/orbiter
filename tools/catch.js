@@ -58,9 +58,6 @@ var getTx = function(web3,desiredBlockHashOrNumber) {
               txData.timestamp = web3.eth.getBlock(desiredBlockHashOrNumber).timestamp;
               if (web3.eth.getTransactionReceipt(txData.hash).gasUsed)
                 txData.gasUsed = web3.eth.getTransactionReceipt(txData.hash).gasUsed;
-              if (!txData.to)
-                txData.to = txData.creates;
-              console.log(txData);
               new Transaction(txData).save();
               if ( typeof err !== 'undefined' && err ) {
                   if (err.code == 11000) {

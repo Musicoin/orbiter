@@ -1,1 +1,0 @@
-{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "blockDB.transactions" }, { "v" : 1, "unique" : true, "key" : { "hash" : 1 }, "name" : "hash_1", "ns" : "blockDB.transactions", "background" : true } ] }

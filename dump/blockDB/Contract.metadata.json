@@ -1,1 +1,0 @@
-{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "blockDB.Contract" }, { "v" : 1, "unique" : true, "key" : { "address" : 1 }, "name" : "address_1", "ns" : "blockDB.Contract", "background" : true } ] }
