@@ -96,7 +96,7 @@ var getTx = function(req, res){
   var tx = req.body.tx.toLowerCase();
   console.log("findinging: " +tx)
 
-  var txFind = Transaction.findOne( { "hash" : tx }, "hash value blockNumber timestamp gas gasUsed gasPrice input nonce from to")
+  var txFind = Transaction.findOne( { "hash" : tx }, "hash value blockNumber timestamp gas gasUsed gasPrice input nonce from to creates")
                   .lean(true);
   txFind.exec(function (err, doc) {
     if (!doc){
@@ -105,7 +105,8 @@ var getTx = function(req, res){
       res.end();
     } else {
 
-
+      if(!doc.to) doc.to = doc.creates;
+      console.log(doc);
       var count = 10;
       var data = [];
       // try to find internal tx

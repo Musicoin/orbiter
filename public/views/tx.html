@@ -14,8 +14,8 @@
           </tr>
           <tr ><td width="25%">from</td>
                 <td><a href="/addr/{{tx.from}}">{{tx.from}}</a></td></tr>
-          <tr ><td width="25%">to</td>
-                <td><a href="/addr/{{tx.to}}">{{tx.to}}</a>
+          <tr ><td width="25%">to </td>
+                <td><a href="/addr/{{tx.to}}">{{tx.to}}</a>  <span style="color:black" ng-show="tx.creates">(contract created)</span>
                 </td></tr>
           <tr ng-repeat="item in tx.itx">
               <td width="25%"> </td>
