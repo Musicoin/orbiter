@@ -27,6 +27,7 @@ module.exports = function(app){
     { "block": "1234" }
   */
   app.post('/addr', getAddr);
+  app.post('/txcount', getTxCount);
   app.post('/internal', getInternalTx);
   app.post('/top', getTopTx);
   app.post('/low', getLowTx);
@@ -44,6 +45,19 @@ module.exports = function(app){
 
 }
 
+var getTxCount = function(req, res){
+  var addr = req.body.addr.toLowerCase();
+  var data = { count: 0 };
+
+  var addrTxCount = Transaction.find( { $or: [{"to": addr}, {"from": addr}] });
+  addrTxCount.exec(function (err, results) {
+    data.count = results.length;
+    res.write(JSON.stringify(data));
+    res.end();
+  });
+}
+
+
 var getAddr = function(req, res){
   // TODO: validate addr and tx
   var addr = req.body.addr.toLowerCase();
@@ -52,9 +66,9 @@ var getAddr = function(req, res){
   var limit = parseInt(req.body.length);
   var start = parseInt(req.body.start);
 
-  var data = { draw: "hi", recordsFiltered: count, recordsTotal: count };
 
-  var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] })
+  var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] });
+  var data = { draw: "hi", recordsFiltered: count, recordsTotal: count };
 
   addrFind.lean(true).sort('-blockNumber').skip(start).limit(limit)
           .exec("find", function (err, docs) {
@@ -65,6 +79,7 @@ var getAddr = function(req, res){
             res.write(JSON.stringify(data));
             res.end();
           });
+
 
 };
 

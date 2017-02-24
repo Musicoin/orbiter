@@ -1,5 +1,5 @@
 angular.module('BlocksApp').controller('AddressController', function($stateParams, $rootScope, $scope, $http, $location) {
-    $scope.$on('$viewContentLoaded', function() {   
+    $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         App.initAjax();
     });
@@ -11,13 +11,22 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
     $scope.addrHash = $stateParams.hash;
     $scope.addr = {"balance": 0, "count": 0};
 
+    var realcount=0;
+    $http({
+      method: 'POST',
+      url: '/txcount',
+      data: {"addr": $scope.addrHash}
+    }).success(function(data){
+      realcount = data.count;
+    });
     //fetch web3 stuff
     $http({
       method: 'POST',
       url: '/web3relay',
-      data: {"addr": $scope.addrHash, "options": ["balance", "count", "bytecode"]}
+      data: {"addr": $scope.addrHash, "options": ["balance", "bytecode"]}
     }).success(function(data) {
       $scope.addr = data;
+      $scope.addr.count = realcount;
       fetchTxs($scope.addr.count);
       if (data.isContract) {
         $rootScope.$state.current.data["pageTitle"] = "Contract Address";
@@ -25,7 +34,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
       }
     });
 
-    // fetch ethf balance 
+    // fetch ethf balance
     $http({
       method: 'POST',
       url: '/fiat',
@@ -50,7 +59,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
                     [10, 20, 50, 100, 150, -1],
                     [10, 20, 50, 100, 150, "All"] // change per page values here
                 ],
-        "pageLength": 20, 
+        "pageLength": 20,
         "order": [
             [6, "desc"]
         ],
@@ -60,7 +69,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
           "infoEmpty": ":(",
           "infoFiltered": "(filtered from _MAX_ total txs)"
         },
-        "columnDefs": [ 
+        "columnDefs": [
           { "targets": [ 5 ], "visible": false, "searchable": false },
           {"type": "date", "targets": 6},
           {"orderable": false, "targets": [0,2,3]},
@@ -84,7 +93,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
     }
 
     var fetchInternalTxs = function() {
-      $("#table_internal_txs").DataTable({    
+      $("#table_internal_txs").DataTable({
         processing: true,
         serverSide: true,
         paging: true,
@@ -101,7 +110,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
                       [10, 20, 50, 100, 150, -1],
                       [10, 20, 50, 100, 150, "All"] // change per page values here
                   ],
-          "pageLength": 20, 
+          "pageLength": 20,
           "order": [
               [6, "desc"]
           ],
@@ -111,7 +120,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
             "infoEmpty": ":(",
             "infoFiltered": "(filtered from _MAX_ total txs)"
           },
-          "columnDefs": [ 
+          "columnDefs": [
             { "targets": [ 5 ], "visible": false, "searchable": false },
             {"type": "date", "targets": 6},
             {"orderable": false, "targets": [0,2,3]},
