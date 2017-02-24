@@ -18,21 +18,23 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
       data: {"addr": $scope.addrHash}
     }).success(function(data){
       realcount = data.count;
+      $http({
+        method: 'POST',
+        url: '/web3relay',
+        data: {"addr": $scope.addrHash, "options": ["balance", "bytecode"]}
+      }).success(function(data) {
+        $scope.addr = data;
+        $scope.addr.count = realcount;
+        fetchTxs($scope.addr.count);
+        if (data.isContract) {
+          $rootScope.$state.current.data["pageTitle"] = "Contract Address";
+          fetchInternalTxs();
+        }
+      });
     });
+
     //fetch web3 stuff
-    $http({
-      method: 'POST',
-      url: '/web3relay',
-      data: {"addr": $scope.addrHash, "options": ["balance", "bytecode"]}
-    }).success(function(data) {
-      $scope.addr = data;
-      $scope.addr.count = realcount;
-      fetchTxs($scope.addr.count);
-      if (data.isContract) {
-        $rootScope.$state.current.data["pageTitle"] = "Contract Address";
-        fetchInternalTxs();
-      }
-    });
+
 
     // fetch ethf balance
     $http({
