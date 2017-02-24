@@ -5,7 +5,7 @@
 
         <table class="col-md-6 table table-hover">
 
-          <tr ><td width="25%">hash</td><td>{{tx.hash}} <span style="color:red" ng-show="tx.gas===tx.gasUsed">(failed)</span></td></tr>
+          <tr ><td width="25%">hash</td><td>{{tx.hash}} <span style="color:red" ng-show="tx.gas===tx.gasUsed">(?)</span></td></tr>
           <tr ><td width="25%">blockNumber</td>
                 <td><a href="/block/{{tx.blockNumber}}">{{tx.blockNumber}}</a></td>
           </tr>
