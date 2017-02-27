@@ -15,19 +15,23 @@ Install mongodb:
 
 ## Running Up Parity
 
-`parity --chain mus.json --tracing on --dapps-port 8848 d`
+Orbiter needs Pairty to trace the internal transactions on Musicoin blockchain. Download [Parity](https://github.com/ethcore/parity/releases) then run a private chain up with:
 
-the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/rust-musicoin/blob/master/mus.json).
+`parity --chain mus.json --tracing on --dapps-port 8848`
+
+the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/orbiter/blob/master/mc.json).
 
 ## Populate the DB
 ### Run:
 
-`node ./tools/patch.js`
+`node ./tools/catch.js`
 
 It may take a while to update all history data from blockchain depends on how far you are from the most recent blocks. After the populating, you may run up listen.js to keep sync with the most recent chains. We suggest using "forever" method:
 
 ```
 sudo npm install -g forever
-forever start listen.js
+forever start catch.js
 ```
-Leave this running in the background to continuously fetch new blocks.
+Leave this running in the background to continuously fetch new blocks. Now you can start Orbiter with:
+
+`node app.js`  
