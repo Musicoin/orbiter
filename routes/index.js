@@ -59,29 +59,49 @@ var getTxCount = function(req, res){
 
 
 var getAddr = function(req, res){
-  // TODO: validate addr and tx
   var addr = req.body.addr.toLowerCase();
-  var count = parseInt(req.body.count);
-
   var limit = parseInt(req.body.length);
   var start = parseInt(req.body.start);
 
+  var count = req.body.count;
 
-  var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] });
-  var data = { draw: "hi", recordsFiltered: count, recordsTotal: count };
+  var data = { draw: parseInt(req.body.draw) };
 
-  addrFind.lean(true).sort('-blockNumber').skip(start).limit(limit)
-          .exec("find", function (err, docs) {
-            if (docs){
-              data.data = filters.filterTX(docs, addr);
-              data.recordsTotal= docs.length;
-              }
-            else
-              data.data = [];
-            res.write(JSON.stringify(data));
-            res.end();
-          });
 
+  var txFind = InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
+                  .lean(true).sort('-blockNumber').skip(start).limit(limit)
+
+  async.parallel([
+    function(cb) {
+      if (count) {
+        data.recordsFiltered = parseInt(count);
+        data.recordsTotal = parseInt(count);
+        cb();
+        return;
+      }
+      InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
+                .count(function(err, count) {
+                    data.recordsFiltered = count;
+                    data.recordsTotal = count;
+                    cb()
+                  });
+    }, function(cb) {
+      txFind.exec("find", function (err, docs) {
+        if (docs)
+          data.data = filters.internalTX(docs);
+        else
+          data.data = [];
+        cb();
+      });
+    }
+
+    ], function(err, results) {
+      if (err) console.error(err);
+      res.write(JSON.stringify(data));
+      res.end();
+    })
 
 };
 
