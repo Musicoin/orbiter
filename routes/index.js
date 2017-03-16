@@ -49,8 +49,10 @@ var getTxCount = function(req, res){
   var addr = req.body.addr.toLowerCase();
   var data = { count: 0 };
 
-  var addrTxCount = Transaction.find( { $or: [{"to": addr}, {"from": addr}] });
-  addrTxCount.exec(function (err, results) {
+  var txFind = InternalTx.find( { "action.callType" : "0",
+                  $or: [{"action.from": addr}, {"action.to": addr}] })
+                  .lean(true).sort('-blockNumber');
+  txFind.exec(function (err, results) {
     data.count = results.length;
     res.write(JSON.stringify(data));
     res.end();
