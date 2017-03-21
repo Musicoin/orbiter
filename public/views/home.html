@@ -42,7 +42,7 @@
         <div class="portlet light">
             <div class="portlet-title">
                 <div class="caption caption-md">
-                    <i class="icon-bar-chart font-red"></i>
+                    <i class="fa fa-exchange font-red"></i>
                     <span class="caption-subject font-red bold uppercase">Transactions</span>
                 </div>
                 <div class="actions">
@@ -67,13 +67,25 @@
                       <div class="todo-tasklist-item-text" style="margin-top:4px;">{{t.value}} MC</div>
                     </div>
                 </div>
-
+              </div>
             </div>
         </div>
         <!-- END PORTLET-->
     </div>
 </div>
 
+<!-- Current Supply Stats -->
+<div class="row alert alert-info" style="margin: 0px 0px 20px 0px;">
+    <div class="col-sm-4"><span class="todo-tasklist-item-title"><i class="fa fa-cube"></i> <b>Last Block:</b> <a href="/block/{{last_block.number}}">{{last_block.number}}</a></span></div>
+    <div class="col-sm-4"><span class="todo-tasklist-item-title"><i class="fa fa-compass"></i> <b>Coins per block:</b> 314</span></div>
+    <div class="col-sm-4"><span class="todo-tasklist-item-title"><i class="fa fa-cubes"></i> <b>Total Supply:</b> {{last_block.number * 314 | number : fractionSize}}</span></div>
+    <div class="col-sm-4" style="margin-top: 10px;"><span class="todo-tasklist-item-title"><i class="fa fa-clock-o"></i> <b>Block Time:</b> {{last_block.timestamp - second_to_last_block.timestamp}}s</span></div>
+    <div class="col-sm-4" style="margin-top: 10px;"><span class="todo-tasklist-item-title"><i class="fa fa-tachometer"></i> <b>Hash Rate:</b> {{last_block.difficulty / (last_block.timestamp - second_to_last_block.timestamp) | totalDifficulty}}</span></div>
+    <div class="col-sm-4" style="margin-top: 10px;"> <span class="todo-tasklist-item-title"><i class="fa fa-bar-chart"></i> <b>Difficulty:</b> {{last_block.difficulty | totalDifficulty}}</span></div>
+</div>
+
+
+<!-- Musicoin disclaimer -->
 <div class="row">
     <div class="col-md-12 offset-md-1">
         <div class="alert alert-info">
