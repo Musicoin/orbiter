@@ -8,9 +8,10 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
 
     $rootScope.isHome = true;
     $scope.current_block_number = 0;
+    $scope.averaged_block_time = 0;
 
     $scope.autorefresh= function() {
-      $scope.refresh_timer = 15;
+      $scope.refresh_timer = 30;
 
       (function update() {
         $scope.refresh_timer--;
@@ -18,7 +19,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         if ($scope.refresh_timer==0){
           $scope.reloadBlocks();
           $scope.reloadTransactions();
-          $scope.refresh_timer = 15
+          $scope.refresh_timer = 30
         }
       }());
     }
@@ -59,7 +60,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       $http({
         method: 'POST',
         url: URL,
-        data: {"action": "latest_blocks"}
+        data: {"action": "latest_blocks", "limit": 20}
       }).success(function(data) {
         $scope.blockLoading = false;
         $scope.latest_blocks = data.blocks;
@@ -68,9 +69,9 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         {
             $scope.current_block_number = data.blocks[0].number;
             $scope.getLatestBlockInfo(data.blocks[0].number);
+            $scope.calculateAverageBlocktime();
         }
 
-        
       });
     }
 
@@ -85,6 +86,25 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         $scope.latest_txs = data.txs;
         $scope.txLoading = false;
       });
+    }
+
+    // Calculate the average block time for showing a more accurate hash rate
+    $scope.calculateAverageBlocktime = function() { 
+      if ($scope.latest_blocks)
+      {
+        let total_time = 0;
+        let cur_timestamp = 0;
+        for (var i = 0, len = $scope.latest_blocks.length; i < len; i++) {
+          cur_timestamp = $scope.latest_blocks[i].timestamp;
+          if (i > 0) { 
+            let prev_timestamp = $scope.latest_blocks[i-1].timestamp;  // reminder: 'prev' block is actually the next block higher up on the chain due to descending ordering
+            let blocktime = prev_timestamp - cur_timestamp;
+            total_time = total_time + blocktime;
+          }
+        }
+        
+        $scope.averaged_block_time = total_time / $scope.latest_blocks.length;
+      }
     }
 
     $scope.reloadBlocks();
