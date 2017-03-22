@@ -9,10 +9,10 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
     $rootScope.isHome = true;
     $scope.current_block_number = 0;
     $scope.averaged_block_time = 0;
+    $scope.refresh_timer = 30;
 
-    $scope.autorefresh= function() {
-      $scope.refresh_timer = 30;
-
+    // Auto-refresh functionality
+    $scope.autorefresh = function() {
       (function update() {
         $scope.refresh_timer--;
         $timeout(update, 1000);
@@ -33,28 +33,12 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         }).success(function(data) {
           if (data.error)
             $location.path("/err404/block/" + blockNum);
-          else {
-                $scope.getSecondToLastBlockInfo(blockNum -1);                
-                $scope.last_block = data;
-          }
+          else   
+             $scope.last_block = data;
         });
     }
 
-    // This is ugly, and violates the DRY principle, but it works for now until we can refactor it
-    $scope.getSecondToLastBlockInfo = function(blockNum) {
-        $http({
-          method: 'POST',
-          url: '/web3relay',
-          data: {"block": blockNum}
-        }).success(function(data) {
-          if (data.error)
-            $scope.second_to_last_block = $scope.last_block;
-          else
-            $scope.second_to_last_block = data;
-        });
-    }
-
-
+    // Fetch the latest Blocks
     $scope.reloadBlocks = function() {
       $scope.blockLoading = true;
       $http({
@@ -75,7 +59,7 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
       });
     }
 
-
+    // Fetch the latest Transactions
     $scope.reloadTransactions = function() {
       $scope.txLoading = true;
       $http({
