@@ -42,8 +42,51 @@ module.exports = function(app){
   app.post('/fiat', fiat);
   app.post('/stats', stats);
 
+  app.get('/json', getJson);
 
 }
+
+// Get stats in JSON format
+//-------------------------------------------------------------------
+var getJson = function(req, res){
+  var queryType = req.query.q;
+  
+  // TOTAL COINS (latest block number * 314)
+  if (queryType && queryType.toLowerCase() == "totalcoins")
+  {
+    var blockFind =  Block.findOne( { }).lean(true).sort('-number');
+    blockFind.exec(function (err, doc) {
+      if (err || !doc) {
+        console.error("BlockFind error: " + err)
+        console.error(req.body);
+        res.write(JSON.stringify({"error": true}));
+      } else {
+        var block = filters.filterBlocks([doc]);
+        if (block && block[0])
+          res.write(JSON.stringify(block[0].number * 314));
+        else
+          res.write(JSON.stringify('Error: Latest block not found. Please contact a developer.'));
+      }
+      res.end();
+    });
+  }
+
+  // Add other query responses here
+  //else if (queryType && queryType.toLowerCase() == "?????") { // TODO  }
+  
+  // Else display a friendly error message
+  else 
+  {
+    var data = "Please specify a valid query type via query string (ex. ?q=totalcoins)";
+    res.write(JSON.stringify(data));
+    res.end();
+
+  }
+  
+}
+//-------------------------------------------------------------------
+// END GET JSON STATS
+
 
 var getTxCount = function(req, res){
   var addr = req.body.addr.toLowerCase();

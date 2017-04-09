@@ -45,10 +45,10 @@
     opacity: 1;
     filter: alpha(opacity=100);
     width: 100%;
-    margin: 0;
+    margin: 5px 0 0 0;
     border: 0;
-    padding: 0;
-    height: 126px;
+    padding: 0 0 10px 0;
+    height: auto;
     background-image: none;
 }
 
@@ -81,8 +81,9 @@
     float: left;
     display: block;
     width: 255px;
-    height: 75px;
+    /*height: 75px;*/
     position: absolute;
+    padding-bottom: 25px;
 }
 
 .page-header .page-header-top .top-menu {

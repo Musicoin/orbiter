@@ -1,4 +1,5 @@
 div.page-logo {overflow: visible;}
+div.page-header-top { padding-bottom: 20px; }
 img.logo-default {
     max-height: 100px;
     height: 60px;
@@ -106,9 +107,16 @@ li.ng-scope {
         margin: 0 !important;
     }
     .page-header .page-header-top .menu-toggler {
-        margin: 33px 3px 0 0;
+        margin: 35px 3px 0 0 !important;
     }
 }
+
+@media(max-width: 991px) {
+    .container {
+        margin: 0 !important;
+    }
+}
+
 ::-webkit-scrollbar {
     width: 4px;
     height: 6px;

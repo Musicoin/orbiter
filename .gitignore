@@ -38,3 +38,7 @@ jspm_packages
 
 # local data
 data/
+
+# block syncing temp files
+.node-xmlhttprequest*
+tools/.node-xmlhttprequest*

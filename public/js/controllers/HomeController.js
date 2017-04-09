@@ -7,34 +7,59 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
     var URL = '/data';
 
     $rootScope.isHome = true;
+    $scope.current_block_number = 0;
+    $scope.averaged_block_time = 0;
+    $scope.refresh_timer = 30;
 
-    $scope.autorefresh= function() {
-      $scope.rand = 10;
-
+    // Auto-refresh functionality
+    $scope.autorefresh = function() {
       (function update() {
-        $scope.rand--;
+        $scope.refresh_timer--;
         $timeout(update, 1000);
-        if ($scope.rand==0){
+        if ($scope.refresh_timer==0){
           $scope.reloadBlocks();
           $scope.reloadTransactions();
-          $scope.rand = 10
+          $scope.refresh_timer = 30
         }
       }());
     }
 
+    // Fetch the complete info on the latest block for difficulty and other stats
+    $scope.getLatestBlockInfo = function(blockNum) {
+        $http({
+          method: 'POST',
+          url: '/web3relay',
+          data: {"block": blockNum}
+        }).success(function(data) {
+          if (data.error)
+            $location.path("/err404/block/" + blockNum);
+          else   
+             $scope.last_block = data;
+        });
+    }
+
+    // Fetch the latest Blocks
     $scope.reloadBlocks = function() {
       $scope.blockLoading = true;
       $http({
         method: 'POST',
         url: URL,
-        data: {"action": "latest_blocks"}
+        data: {"action": "latest_blocks", "limit": 20}
       }).success(function(data) {
         $scope.blockLoading = false;
         $scope.latest_blocks = data.blocks;
+        
+        if ($scope.current_block_number < data.blocks[0].number)
+        {
+            $scope.current_block_number = data.blocks[0].number;
+            $scope.getLatestBlockInfo(data.blocks[0].number);
+            $scope.calculateAverageBlocktime();
+        }
+
       });
     }
 
-
+    // Fetch the latest Transactions
     $scope.reloadTransactions = function() {
       $scope.txLoading = true;
       $http({
@@ -45,6 +70,25 @@ angular.module('BlocksApp').controller('HomeController', function($rootScope, $s
         $scope.latest_txs = data.txs;
         $scope.txLoading = false;
       });
+    }
+
+    // Calculate the average block time for showing a more accurate hash rate
+    $scope.calculateAverageBlocktime = function() { 
+      if ($scope.latest_blocks)
+      {
+        let total_time = 0;
+        let cur_timestamp = 0;
+        for (var i = 0, len = $scope.latest_blocks.length; i < len; i++) {
+          cur_timestamp = $scope.latest_blocks[i].timestamp;
+          if (i > 0) { 
+            let prev_timestamp = $scope.latest_blocks[i-1].timestamp;  // reminder: 'prev' block is actually the next block higher up on the chain due to descending ordering
+            let blocktime = prev_timestamp - cur_timestamp;
+            total_time = total_time + blocktime;
+          }
+        }
+        
+        $scope.averaged_block_time = total_time / $scope.latest_blocks.length;
+      }
     }
 
     $scope.reloadBlocks();
