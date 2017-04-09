@@ -35,3 +35,8 @@ forever start catch.js
 Leave this running in the background to continuously fetch new blocks. Now you can start Orbiter with:
 
 `node app.js`  
+
+
+## License
+
+MIT  (By following http://github.com/ethereumproject/explorer)
