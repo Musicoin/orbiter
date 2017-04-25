@@ -19,7 +19,7 @@ Orbiter needs Pairty to trace the internal transactions on Musicoin blockchain. 
 
 `parity --chain mus.json --tracing on --dapps-port 8848`
 
-the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/orbiter/blob/master/mc.json).
+the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/orbiter/blob/master/mc.json)  (for Parity version 1.6+, please use this forked spec).
 
 ## Populate the DB
 ### Run:
