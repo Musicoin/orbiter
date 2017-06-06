@@ -41,7 +41,7 @@ var Transaction = new Schema(
     "hash": {type: String, index: {unique: true}},
     "nonce": Number,
     "blockHash": String,
-    "blockNumber": Number,
+    "blockNumber":  {type: Number, index: {unique: true}},
     "transactionIndex": Number,
     "from": String,
     "to": String,
