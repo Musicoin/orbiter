@@ -15,9 +15,9 @@ Install mongodb:
 
 ## Running Up Parity
 
-Orbiter needs Pairty to trace the internal transactions on Musicoin blockchain. Download [Parity](https://github.com/ethcore/parity/releases) then run a private chain up with:
+Orbiter needs Pairty to trace the internal transactions on Musicoin blockchain. Download [Parity](https://github.com/paritytech/parity/releases/latest) then run a private chain up with:
 
-`parity --chain mus.json --tracing on --dapps-port 8848`
+`parity --chain mc.json --tracing on --dapps-port 8848`
 
 the newest version of chain spec of Musicoin can be found [here](https://github.com/Musicoin/orbiter/blob/master/mc.json)  (for Parity version 1.6+, please use this forked [spec](https://github.com/Musicoin/orbiter/blob/master/mc_parity16.json)).
 
