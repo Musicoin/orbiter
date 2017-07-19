@@ -3,6 +3,6 @@ ssh jenkins@104.196.252.27  <<EOF
   cd /musicoin/orbiter
   git pull
   npm install --production
-  forever restartall
+  pm2 restart all
   exit
 EOF
