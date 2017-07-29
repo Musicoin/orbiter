@@ -13,7 +13,6 @@
     "fs": "*",
     "http": "*",
     "https": "*",
-    "helmet": "*",
     "mongoose": "^4.5.8",
     "morgan": "^1.7.0",
     "serve-favicon": "~2.1.3",
