@@ -9,7 +9,6 @@ const redirectHttps = require('redirect-https');
 var fs = require ('fs');
 var https = require('https');
 var http = require('http');
-var helmet = require ('helmet');
 var app = express();
 app.set('port', process.env.PORT || 3000);
 // view engine setup
@@ -22,7 +21,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet());
 // app libraries
 global.__lib = __dirname + '/lib/';
 // client
