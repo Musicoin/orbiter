@@ -12,13 +12,15 @@ Install dependencies: `npm install`
 
 Install mongodb: `sudo apt-get install -y mongodb-org` [mongodb](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 
-## Running Up ~~Parity~~ RMC
+## Running Up RMC
 
-Orbiter needs ~~Parity~~RMC to trace the internal transactions on Musicoin blockchain. Download [RMC](https://github.com/immartian/rmc/releases/tag/V0.1.0t) and run a private chain:
+Orbiter needs RMC to trace the internal transactions on Musicoin blockchain. Download [RMC](https://github.com/immartian/rmc/releases/tag/V0.1.0) and run a private chain:
 
 `rmc --chain rmc.json --tracing on --dapps-port 8848`
 
-~~the newest version of the chain spec of Musicoin can be found [here](https://github.com/Musicoin/orbiter/blob/master/mc.json) (for Parity version 1.6+, please use this forked [spec](https://github.com/Musicoin/orbiter/blob/master/mc_parity16.json))~~  The chain spec can be download [here]( https://github.com/immartian/rmc/releases/download/V0.1.0/rmc.json).
+The chain spec can be download [here]( https://github.com/immartian/rmc/releases/download/V0.1.0/rmc.json).
+
+Note: All Parity builds even with the spec above are not compatible with Musicoin any more after 9/8/2017.  
 
 ## Syncing Blocks
 
