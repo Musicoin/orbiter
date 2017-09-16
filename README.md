@@ -16,7 +16,7 @@ Install mongodb: `sudo apt-get install -y mongodb-org` [mongodb](https://docs.mo
 
 Orbiter needs RMC to trace the internal transactions on Musicoin blockchain. Download [RMC](https://github.com/immartian/rmc/releases/tag/V0.1.0) and run a private chain:
 
-`rmc --chain rmc.json --tracing on --dapps-port 8848`
+./rmc --chain rmc.json  --port 3304 --tracing on --jsonrpc-port 8545
 
 The chain spec can be download [here]( https://github.com/immartian/rmc/releases/download/V0.1.0/rmc.json).
 
