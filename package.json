@@ -1,5 +1,5 @@
 {
-  "name": "Musicoin Orbiter",
+  "name": "MusicoinOrbiter",
   "private": false,
   "version": "0.1.0",
   "description": "A lightweight explorer for Musicoin blockchain",
@@ -10,7 +10,7 @@
     "body-parser": "^1.15.2",
     "ejs": "~0.8.5",
     "express": "^4.14.0",
-    "fs": "*",
+    "fs": "0.0.1-security",
     "http": "*",
     "https": "*",
     "mongoose": "^4.5.8",
