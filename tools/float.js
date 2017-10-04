@@ -303,7 +303,7 @@ var patchBlocks = function(config) {
         config.gethPort.toString()));
 
     // number of blocks should equal difference in block numbers
-    var firstBlock = web3.eth.blockNumber-10;
+    var firstBlock = web3.eth.blockNumber-1;
     var lastBlock = web3.eth.blockNumber;
 
 
