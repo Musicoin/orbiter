@@ -174,7 +174,7 @@ var writeTxToDB = function(txData) {
            }
         } else {
             console.log('DB successfully written at ' +
-                txData.blockNumber.toString() + " with tx:" +txData.transactionHash);
+                txData.blockNumber.toString() + " with itx:" +txData.transactionHash);
         }
       });
 }
