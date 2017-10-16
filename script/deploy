@@ -1,6 +1,6 @@
 ssh jenkins@104.196.252.27  <<EOF
   sudo su
-  cd /musicoin/orbiter
+  cd ~/orbiter
   git pull
   npm install --production
   pm2 restart all
