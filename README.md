@@ -2,7 +2,9 @@
 
 ![badge](https://img.shields.io/badge/License-MIT-blue.svg)
 
-**Live (staging) Version: [orbiter.musicoin.org](https://orbiter.musicoin.org)**
+[Explorer 1](https://explorer.musicoin.org) running on parity
+
+[Explorer 2](https://orbiter.musicoin.org) running on rmc
 
 ## Local installation
 
@@ -20,8 +22,6 @@ Orbiter needs RMC to trace the internal transactions on Musicoin blockchain. Dow
 
 The chain spec can be download [here]( https://github.com/immartian/rmc/releases/download/V0.1.0/rmc.json).
 
-Note: All Parity builds even with the spec above are not compatible with Musicoin any more after 9/8/2017.  
-
 ## Syncing Blocks
 
 Run `node ./tools/catch.js` to start the `catch` script and listen to blocks. Run using your favorite background script runner (`pm2/forever/daemon`). The example for `pm2` is as follows:
@@ -35,6 +35,11 @@ Please make sure that you do not spawn multiple instances of `catch` using clust
 
 After this, you can start Orbiter with: `node app.js` (or `pm2 start app.js`)
 
+
+## Running with parity
+
+All Parity versions above 1.8.0 are compatible with Musicoin. For setting up an explorer with Parity, check out [explorer](https://github.com/seungjlee/MusicoinExplorer).
+
 ## License
 
-MIT , similar to [Ethereum](http://github.com/ethereumproject/explorer).
+MIT , similar to [Ethereum Classis](http://github.com/ethereumproject/explorer).
