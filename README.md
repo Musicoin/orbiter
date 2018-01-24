@@ -1,10 +1,10 @@
+## Orbiter has archived in favour of explorer now.
+
 # Musicoin Blockchain Explorer
 
 ![badge](https://img.shields.io/badge/License-MIT-blue.svg)
 
 [Explorer 1](https://explorer.musicoin.org) running on parity
-
-[Explorer 2](https://orbiter.musicoin.org) running on rmc
 
 ## Local installation
 
